@@ -41,4 +41,9 @@ class Company extends Model
     {
         return $this->hasMany(User::class, 'company_id');
     }
+
+    public function offers()
+    {
+        return $this->hasMany(JobOpportunityOffer::class, 'company_id');
+    }
 }

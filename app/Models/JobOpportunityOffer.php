@@ -85,4 +85,9 @@ class JobOpportunityOffer extends Model
     {
         return $this->belongsTo(JobOpportunityContractType::class, 'contract_type_id');
     }
+
+    public function applications()
+    {
+        return $this->hasMany(JobOpportunityApplication::class, 'offer_id');
+    }
 }
