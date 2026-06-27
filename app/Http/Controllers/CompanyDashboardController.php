@@ -75,15 +75,11 @@ class CompanyDashboardController extends Controller
             // All Offers
             $offers = JobOpportunityOffer::where('company_id', $company->id)
                 ->with(['state', 'location', 'workSchedule', 'contractType', 'category'])
+                ->withCount(['applications as applicants_count' => function ($q) {
+                    $q->whereNull('deleted_at');
+                }])
                 ->latest('publication_date')
                 ->get();
-
-            foreach ($offers as $offer) {
-                $offer->applicants_count = DB::table('job_opportunity_applications')
-                    ->where('offer_id', $offer->id)
-                    ->whereNull('deleted_at')
-                    ->count();
-            }
             $recentOffers = $offers->take(5);
 
             // Load options for publishing modal
