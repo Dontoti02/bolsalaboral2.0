@@ -468,6 +468,9 @@ class UserController extends Controller
                 'EMPRESA' => 4,
             ];
 
+            // Load all existing emails into an in-memory hash map for fast O(1) checks
+            $existingEmails = User::pluck('email')->flip()->toArray();
+
             DB::beginTransaction();
 
             $totalRows = count($rows);
@@ -491,11 +494,14 @@ class UserController extends Controller
                     continue;
                 }
 
-                // Check duplicate email in DB
-                if (User::where('email', $email)->exists()) {
+                // Check duplicate email in DB in-memory
+                if (isset($existingEmails[$email])) {
                     $errors[] = "Fila $i: El correo $email ya está registrado en el sistema.";
                     continue;
                 }
+
+                // Mark email as taken so subsequent rows in same spreadsheet are detected
+                $existingEmails[$email] = true;
 
                 // Map role string to ID
                 $roleId = $rolesMap[$roleStr] ?? 3; // default Student if invalid
