@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\JobOpportunityApplication;
 use App\Models\JobOpportunityOffer;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
@@ -31,7 +34,6 @@ class StudentController extends Controller
                     $q->with('company:id,name');
                 }])
                 ->orderBy('created_at', 'desc')
-                ->take(5)
                 ->get();
 
             // All active offers (recommended jobs)
@@ -48,10 +50,18 @@ class StudentController extends Controller
                     return $offer;
                 });
 
-            // Count CVs (we can count from applications that have a CV attached, or from a cvs table if it exists)
-            $cvsCount = JobOpportunityApplication::where('user_id', $user->id)
-                ->whereNotNull('cv')
-                ->count();
+            // Retrieve student's CVs
+            $cvs = DB::table('job_opportunity_user_cv')
+                ->where('user_id', $user->id)
+                ->whereNull('deleted_at')
+                ->orderBy('version', 'desc')
+                ->get()
+                ->map(function ($cv) {
+                    $cv->filename = basename($cv->url);
+                    $cv->uploaded_at = $cv->created_at ? \Carbon\Carbon::parse($cv->created_at)->format('d M Y') : '-';
+                    return $cv;
+                });
+            $cvsCount = $cvs->count();
 
         } catch (\Exception $e) {
             $totalApplications = 0;
@@ -60,6 +70,7 @@ class StudentController extends Controller
             $recentApplications = collect();
             $activeOffers = collect();
             $cvsCount = 0;
+            $cvs = collect();
         }
 
         try {
@@ -75,7 +86,132 @@ class StudentController extends Controller
             'recentApplications',
             'activeOffers',
             'cvsCount',
+            'cvs',
             'config'
         ));
+    }
+
+    /**
+     * Upload a new CV.
+     */
+    public function uploadCv(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'cv' => 'required|file|mimes:pdf|max:5120',
+        ], [
+            'cv.required' => 'El archivo del currículum es obligatorio.',
+            'cv.mimes' => 'El currículum debe ser un archivo PDF.',
+            'cv.max' => 'El tamaño del currículum no debe exceder los 5MB.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        try {
+            $file = $request->file('cv');
+            $filename = 'cv_' . auth()->id() . '_' . time() . '.' . $file->getClientOriginalExtension();
+            
+            $uploadPath = public_path('uploads/cvs');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            
+            $file->move($uploadPath, $filename);
+            $url = '/uploads/cvs/' . $filename;
+            
+            // Calculate next version
+            $latestVersion = DB::table('job_opportunity_user_cv')
+                ->where('user_id', auth()->id())
+                ->max('version') ?? 0;
+            
+            $id = DB::table('job_opportunity_user_cv')->insertGetId([
+                'user_id' => auth()->id(),
+                'url' => $url,
+                'version' => $latestVersion + 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Currículum subido exitosamente.',
+                'cv' => [
+                    'id' => $id,
+                    'url' => $url,
+                    'version' => $latestVersion + 1,
+                    'filename' => $file->getClientOriginalName(),
+                    'uploaded_at' => now()->format('d M Y')
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al subir currículum: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete a CV (soft-delete).
+     */
+    public function deleteCv($id)
+    {
+        try {
+            $cv = DB::table('job_opportunity_user_cv')
+                ->where('id', $id)
+                ->where('user_id', auth()->id())
+                ->first();
+
+            if (!$cv) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Currículum no encontrado o no pertenece a su usuario.'
+                ], 404);
+            }
+
+            DB::table('job_opportunity_user_cv')
+                ->where('id', $id)
+                ->update([
+                    'deleted_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Currículum eliminado exitosamente.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar currículum: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Download a CV.
+     */
+    public function downloadCv($id)
+    {
+        $cv = DB::table('job_opportunity_user_cv')
+            ->where('id', $id)
+            ->where('user_id', auth()->id())
+            ->whereNull('deleted_at')
+            ->first();
+
+        if (!$cv) {
+            abort(404, 'Currículum no encontrado.');
+        }
+
+        $filePath = public_path($cv->url);
+        if (!file_exists($filePath)) {
+            abort(404, 'El archivo físico del currículum no existe.');
+        }
+
+        return response()->download($filePath);
     }
 }
