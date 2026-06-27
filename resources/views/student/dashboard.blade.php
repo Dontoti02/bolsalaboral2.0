@@ -27,7 +27,7 @@
                         "on-primary-fixed": "#001d33",
                         "surface-container-lowest": "#ffffff",
                         "on-tertiary": "#ffffff",
-                        "primary-container": "#0f3d5e",
+                        "primary-container": "{{ $config['primary_color'] ?? '#002741' }}",
                         "inverse-surface": "#2d3133",
                         "surface-container-high": "#e6e8eb",
                         "on-secondary-fixed-variant": "#005048",
@@ -55,7 +55,7 @@
                         "secondary-container": "#7df7e4",
                         "on-primary-fixed-variant": "#204a6b",
                         "on-primary": "#ffffff",
-                        "primary": "#002741",
+                        "primary": "{{ $config['primary_color'] ?? '#002741' }}",
                         "on-error": "#ffffff",
                         "on-tertiary-fixed-variant": "#5b4300",
                         "on-secondary-container": "#007166",
@@ -151,31 +151,37 @@
 <!-- Main Content Wrapper -->
 <div class="flex-1 md:ml-0 flex flex-col min-h-screen">
     <!-- TopNavBar -->
-    <header class="bg-surface-bright border-b border-outline-variant flex justify-between items-center px-lg py-md sticky top-0 z-30">
-        <div class="flex items-center gap-4 w-1/3">
-            <!-- Mobile Menu Trigger -->
-            <button id="open-sidebar-btn" class="md:hidden text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full">
-                <span class="material-symbols-outlined">menu</span>
-            </button>
-            <div class="relative w-full max-w-md hidden md:block">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-                <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-transparent text-body-sm" placeholder="Buscar..." type="text">
-            </div>
-        </div>
-        <div class="flex items-center gap-md">
-            <button class="text-on-surface-variant hover:bg-surface-container-high rounded-full p-2 transition-all">
-                <span class="material-symbols-outlined">notifications</span>
-            </button>
-            <button class="text-on-surface-variant hover:bg-surface-container-high rounded-full p-2 transition-all">
-                <span class="material-symbols-outlined">help</span>
-            </button>
-            <div class="flex items-center gap-3 ml-2">
-                <div class="text-right hidden sm:block">
-                    <p class="text-label-md font-semibold text-on-surface leading-none">{{ Auth::user()->person->names ?? 'Estudiante' }}</p>
-                    <span class="text-[11px] text-on-surface-variant">Estudiante</span>
+    <header class="sticky top-0 right-0 w-full bg-surface-bright border-b border-outline-variant z-20 h-[72px]">
+        <div class="flex justify-between items-center px-lg py-md h-full">
+            <!-- Search and Mobile Toggle -->
+            <div class="flex items-center gap-4 flex-1 max-w-md">
+                <!-- Mobile Menu Trigger -->
+                <button id="open-sidebar-btn" class="md:hidden text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="relative w-full hidden md:block">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+                    <input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="Buscar..." type="text">
                 </div>
-                <div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant bg-primary-container text-on-primary flex items-center justify-center font-bold">
-                    {{ substr(Auth::user()->person->names ?? 'E', 0, 1) }}
+            </div>
+            <!-- Trailing Actions & Profile -->
+            <div class="flex items-center gap-md">
+                <button class="text-on-surface-variant hover:bg-surface-container-high rounded-full p-2 transition-all">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="text-on-surface-variant hover:bg-surface-container-high rounded-full p-2 transition-all">
+                    <span class="material-symbols-outlined">help</span>
+                </button>
+                <div class="w-px h-6 bg-outline-variant mx-sm"></div>
+                
+                <div class="flex items-center gap-3 ml-sm">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-label-md font-semibold text-on-surface leading-none">{{ Auth::user()->person->names ?? 'Estudiante' }}</p>
+                        <span class="text-[11px] text-on-surface-variant">Estudiante</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant bg-primary-container text-on-primary flex items-center justify-center font-bold">
+                        {{ substr(Auth::user()->person->names ?? 'E', 0, 1) }}
+                    </div>
                 </div>
             </div>
         </div>
