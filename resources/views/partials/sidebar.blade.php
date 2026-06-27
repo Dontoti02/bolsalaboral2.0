@@ -51,7 +51,7 @@
                         $isActive = ($sidebarActive === ($item['key'] ?? ''));
                         $baseClasses = 'tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg scale-95 active:scale-90 transition-transform text-left';
                         $stateClasses = $isActive
-                            ? 'bg-surface-variant text-on-surface'
+                            ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary rounded-r-lg rounded-l-none'
                             : 'text-on-surface-variant hover:bg-surface-variant transition-colors duration-200';
                     @endphp
                     <button data-tab="{{ $item['key'] ?? '' }}" class="{{ $baseClasses }} {{ $stateClasses }}">
