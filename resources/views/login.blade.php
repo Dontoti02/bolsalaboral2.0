@@ -10,6 +10,12 @@
             --primary-container-color: {{ $config['primary_color'] ?? '#0f3d5e' }};
         }
     </style>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .material-symbols-outlined {
@@ -45,7 +51,7 @@
                     <img src="{{ $config['logo'] }}" alt="Logo" class="h-10 w-auto object-contain">
                 @endif
                 <span class="font-display-lg text-display-lg text-primary-container tracking-tight leading-none">{{ $config['application_name'] ?? 'Talentum' }}</span>
-            </div            <!-- Section: Login -->
+            </div> <!-- Section: Login -->
             <div id="login-section" class="space-y-md">
                 <div class="mb-xl text-center lg:text-left">
                     <h1 class="font-headline-md text-headline-md text-on-surface mb-xs">Iniciar Sesión</h1>

@@ -67,6 +67,21 @@
     --color-on-tertiary-fixed: #251a00;
     --color-on-tertiary-fixed-variant: #5b4300;
     --color-surface-tint: #3a6285;
+    --color-student-accent: #7C5DFA;
+    --color-student-accent-light: #E9E5FF;
+
+    /* Custom Max-Widths to override spacing scale overrides in Tailwind v4 */
+    --max-width-xs: 20rem;
+    --max-width-sm: 24rem;
+    --max-width-md: 28rem;
+    --max-width-lg: 32rem;
+    --max-width-xl: 36rem;
+    --max-width-2xl: 42rem;
+    --max-width-3xl: 48rem;
+    --max-width-4xl: 56rem;
+    --max-width-5xl: 64rem;
+    --max-width-6xl: 72rem;
+    --max-width-7xl: 80rem;
 
     /* Font Sizes and Weights */
     --text-headline-lg-mobile: 24px;

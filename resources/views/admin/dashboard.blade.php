@@ -164,7 +164,7 @@
                     <button onclick="switchTab('maintainers')"
                         class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors opacity-80 active:opacity-100">Reportes</button>
                     <button onclick="switchTab('settings')"
-                        class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors opacity-80 active:opacity-100">AnalÃ­ticas</button>
+                        class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors opacity-80 active:opacity-100">Analíticas</button>
                 </div>
                 <div class="hidden">
                     <button
@@ -270,9 +270,9 @@
                 <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
                         <h1 class="text-display-lg font-display-lg text-primary mb-2 hidden md:block">Panel de
-                            AdministraciÃ³n Global</h1>
+                            Administración Global</h1>
                         <h1 class="text-headline-lg-mobile font-headline-lg-mobile text-primary mb-2 md:hidden">Panel de
-                            AdministraciÃ³n Global</h1>
+                            Administración Global</h1>
                         <p class="text-body-md font-body-md text-on-surface-variant">Gestione empresas, usuarios y
                             ofertas laborales desde un solo lugar.</p>
                     </div>
@@ -316,7 +316,7 @@
                             </div>
                             @if($pendingCompanies > 0)
                                 <span
-                                    class="px-2 py-1 bg-error-container text-on-error-container text-label-sm font-label-sm rounded-full">AtenciÃ³n
+                                    class="px-2 py-1 bg-error-container text-on-error-container text-label-sm font-label-sm rounded-full">Atención
                                     Requerida</span>
                             @endif
                         </div>
@@ -384,7 +384,7 @@
                                             Estado</th>
                                         <th
                                             class="p-4 text-label-sm font-label-sm font-semibold border-b border-outline-variant text-right">
-                                            AcciÃ³n</th>
+                                            Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-body-md font-body-md">
@@ -455,7 +455,7 @@
                                 <div class="text-center py-xl text-on-surface-variant">
                                     <span class="material-symbols-outlined text-4xl text-outline mb-2 block">timeline</span>
                                     <p class="font-semibold">Sin actividad reciente</p>
-                                    <p class="text-body-sm text-on-surface-variant mt-1">Las novedades aparecerÃ¡n aquÃ­.
+                                    <p class="text-body-sm text-on-surface-variant mt-1">Las novedades aparecerán aquí.
                                     </p>
                                 </div>
                             @endforelse
@@ -546,7 +546,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- BÃºsqueda simple -->
+                                    <!-- Búsqueda simple -->
                                     <div class="relative flex-1 sm:flex-none">
                                         <span
                                             class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px] pointer-events-none">search</span>
@@ -563,14 +563,14 @@
                                         @endif
                                     </div>
 
-                                    <!-- BotÃ³n Buscar -->
+                                    <!-- Botón Buscar -->
                                     <button onclick="filterUsers()"
                                         class="px-4 py-2 bg-primary text-on-primary rounded-xl text-label-sm font-semibold hover:opacity-90 transition-opacity shrink-0 flex items-center gap-1.5 shadow-sm shadow-primary/10">
                                         <span class="material-symbols-outlined text-[18px]">search</span>
                                         <span class="hidden sm:inline">Buscar</span>
                                     </button>
 
-                                    <!-- BotÃ³n BÃºsqueda Avanzada -->
+                                    <!-- Botón Búsqueda Avanzada -->
                                     <button type="button" id="advanced-search-toggle" onclick="toggleAdvancedSearch()"
                                         class="px-3 py-2 border rounded-xl text-label-sm font-semibold transition-all shrink-0 flex items-center gap-1.5 {{ ($currentStatus) ? 'bg-primary/5 border-primary text-primary' : 'border-outline-variant text-on-surface-variant hover:bg-surface-container-high' }}"
                                         title="Busqueda avanzada">
@@ -582,7 +582,7 @@
                                 </div>
                             </div>
 
-                            <!-- Panel de BÃºsqueda Avanzada (colapsable) -->
+                            <!-- Panel de Búsqueda Avanzada (colapsable) -->
                             <div id="advanced-search-panel"
                                 class="{{ ($currentStatus) ? '' : 'hidden' }} overflow-hidden transition-all duration-300"
                                 aria-hidden="{{ ($currentStatus) ? 'false' : 'true' }}">
@@ -756,7 +756,7 @@
                                             </div>
                                             @if ($user->id == auth()->id())
                                                 <span
-                                                    class="ml-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold tracking-wide shrink-0">TÃº</span>
+                                                    class="ml-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold tracking-wide shrink-0">Tú</span>
                                             @endif
                                         </td>
                                         <td class="p-4 text-on-surface-variant">
@@ -786,7 +786,7 @@
                                             <button
                                                 onclick="openChangePasswordModal({{ $user->id }}, '{{ addslashes($displayName) }}')"
                                                 class="p-1.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors"
-                                                title="Cambiar ContraseÃ±a">
+                                                title="Cambiar Contraseña">
                                                 <span class="material-symbols-outlined text-[20px]">lock_reset</span>
                                             </button>
                                             @if ($user->id != auth()->id())
@@ -816,7 +816,7 @@
                                                     <p class="font-bold text-on-surface text-lg">No se encontraron usuarios
                                                     </p>
                                                     <p class="text-body-sm text-on-surface-variant max-w-sm mx-auto">No hay
-                                                        registros que coincidan con los filtros de rol o bÃºsqueda aplicados
+                                                        registros que coincidan con los filtros de rol o búsqueda aplicados
                                                         actualmente.</p>
                                                 </div>
                                                 @if($currentSearch || $currentRolId)
@@ -834,12 +834,12 @@
                             </tbody>
                         </table>
                     </div>
-                    <!-- PaginaciÃ³n Premium -->
+                    <!-- Paginación Premium -->
                     @if ($users instanceof \Illuminate\Pagination\LengthAwarePaginator && $users->hasPages())
                         @php
                             $currentPage = $users->currentPage();
                             $lastPage = $users->lastPage();
-                            $sidePages = 2; // Cantidad de pÃ¡ginas a mostrar a los lados de la actual
+                            $sidePages = 2; // Cantidad de páginas a mostrar a los lados de la actual
                         @endphp
                         <div
                             class="px-md py-3.5 border-t border-outline-variant bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -848,8 +848,8 @@
                                 <span class="text-on-surface font-semibold">{{ $users->lastItem() }}</span> de <span
                                     class="text-on-surface font-semibold">{{ $users->total() }}</span> usuarios
                             </span>
-                            <nav class="flex items-center gap-1.5 select-none" aria-label="NavegaciÃ³n de pÃ¡ginas">
-                                {{-- BotÃ³n Anterior --}}
+                            <nav class="flex items-center gap-1.5 select-none" aria-label="Navegación de páginas">
+                                {{-- Botón Anterior --}}
                                 @if ($users->onFirstPage())
                                     <span
                                         class="w-9 h-9 rounded-xl text-outline-variant/60 cursor-not-allowed flex items-center justify-center border border-outline-variant/30"
@@ -859,14 +859,14 @@
                                 @else
                                     <a href="{{ $users->previousPageUrl() }}"
                                         class="w-9 h-9 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors flex items-center justify-center border border-outline-variant/60 shadow-sm"
-                                        aria-label="PÃ¡gina anterior">
+                                        aria-label="Página anterior">
                                         <span class="material-symbols-outlined text-[20px]">chevron_left</span>
                                     </a>
                                 @endif
 
-                                {{-- PÃ¡ginas --}}
+                                {{-- Páginas --}}
                                 @if ($lastPage <= 7)
-                                    {{-- Si hay 7 pÃ¡ginas o menos, mostrarlas todas --}}
+                                    {{-- Si hay 7 páginas o menos, mostrarlas todas --}}
                                     @foreach (range(1, $lastPage) as $page)
                                         @if ($page == $currentPage)
                                             <span
@@ -877,7 +877,7 @@
                                         @endif
                                     @endforeach
                                 @else
-                                    {{-- PÃ¡gina 1 --}}
+                                    {{-- Página 1 --}}
                                     @if (1 == $currentPage)
                                         <span
                                             class="w-9 h-9 rounded-xl bg-primary text-on-primary flex items-center justify-center text-label-sm font-semibold shadow-md shadow-primary/20 ring-2 ring-primary/10">1</span>
@@ -911,7 +911,7 @@
                                         <span class="w-9 h-9 flex items-center justify-center text-outline text-label-sm">...</span>
                                     @endif
 
-                                    {{-- Ãšltima pÃ¡gina --}}
+                                    {{-- Última página --}}
                                     @if ($lastPage == $currentPage)
                                         <span
                                             class="w-9 h-9 rounded-xl bg-primary text-on-primary flex items-center justify-center text-label-sm font-semibold shadow-md shadow-primary/20 ring-2 ring-primary/10">{{ $lastPage }}</span>
@@ -921,11 +921,11 @@
                                     @endif
                                 @endif
 
-                                {{-- BotÃ³n Siguiente --}}
+                                {{-- Botón Siguiente --}}
                                 @if ($users->hasMorePages())
                                     <a href="{{ $users->nextPageUrl() }}"
                                         class="w-9 h-9 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors flex items-center justify-center border border-outline-variant/60 shadow-sm"
-                                        aria-label="Siguiente pÃ¡gina">
+                                        aria-label="Siguiente página">
                                         <span class="material-symbols-outlined text-[20px]">chevron_right</span>
                                     </a>
                                 @else
@@ -941,7 +941,7 @@
                 </div>
             </div>
 
-            <!-- ================= PANEL: CONFIGURACIÃ“N (AJUSTES) ================= -->
+            <!-- ================= PANEL: CONFIGURACIÓN (AJUSTES) ================= -->
             <div id="panel-settings" class="tab-panel space-y-lg hidden">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
@@ -956,16 +956,16 @@
                     class="bg-surface rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col p-lg space-y-lg"
                     enctype="multipart/form-data">
                     @csrf
-                    <!-- SecciÃ³n 1: InformaciÃ³n General -->
+                    <!-- Sección 1: Información General -->
                     <div class="space-y-lg">
                         <h3
                             class="font-headline-sm text-headline-sm text-on-surface border-b border-outline-variant pb-2">
-                            InformaciÃ³n General</h3>
+                            Información General</h3>
 
-                        <!-- Nombre de la instituciÃ³n -->
+                        <!-- Nombre de la institución -->
                         <div class="space-y-xs">
                             <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                                for="set-app-name">Nombre de la instituciÃ³n</label>
+                                for="set-app-name">Nombre de la institución</label>
                             <input
                                 class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
                                 id="set-app-name" name="application_name"
@@ -1018,10 +1018,10 @@
                             </div>
                         </div>
 
-                        <!-- TamaÃ±o mÃ¡ximo -->
+                        <!-- Tamaño máximo -->
                         <div class="space-y-xs">
                             <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                                for="set-max-size">TamaÃ±o mÃ¡ximo de archivos a subir (MB)</label>
+                                for="set-max-size">Tamaño máximo de archivos a subir (MB)</label>
                             <input
                                 class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
                                 id="set-max-size" name="maximum_file_size_to_upload"
@@ -1031,8 +1031,7 @@
 
                         <!-- Primary Color Palette -->
                         <div class="space-y-xs">
-                            <label class="font-label-sm text-label-sm text-on-surface-variant block">Primary
-                                Color</label>
+                            <label class="font-label-sm text-label-sm text-on-surface-variant block">Elegir tema principal</label>
                             <input type="hidden" id="set-primary-color" name="primary_color"
                                 value="{{ $config['primary_color'] ?? '#7367F0' }}">
                             <div class="flex flex-wrap gap-3" id="color-palette">
@@ -1051,7 +1050,7 @@
                                     <button type="button" onclick="selectPrimaryColor('{{ $hex }}', this)"
                                         class="w-10 h-10 rounded-lg {{ $class }} flex items-center justify-center text-white focus:outline-none transition-transform active:scale-95 shadow-sm">
                                         <span
-                                            class="material-symbols-outlined text-xl {{ strtolower($currentColor) === strtolower($hex) ? '' : 'hidden' }}">check</span>
+                                            class="material-symbols-outlined text-xl" style="display: {{ strtolower($currentColor) === strtolower($hex) ? 'inline-block' : 'none' }};">check</span>
                                     </button>
                                 @endforeach
                             </div>
@@ -1065,7 +1064,7 @@
                         </div>
                     </div>
 
-                    <!-- SecciÃ³n 2: Iconos e Imagenes -->
+                    <!-- Sección 2: Iconos e Imagenes -->
                     <div class="space-y-lg pt-lg border-t border-outline-variant">
                         <h3 class="font-headline-sm text-headline-sm text-on-surface">Iconos</h3>
 
@@ -1169,8 +1168,8 @@
                             <select id="filter-sort" onchange="loadOffers()"
                                 class="w-full bg-background border border-outline-variant/60 rounded-xl px-2 py-1.5 outline-none text-body-sm font-medium focus:border-primary transition-all">
                                 <option value="recent">Recientes</option>
-                                <option value="title_asc">TÃ­tulo A-Z</option>
-                                <option value="title_desc">TÃ­tulo Z-A</option>
+                                <option value="title_asc">Título A-Z</option>
+                                <option value="title_desc">Título Z-A</option>
                                 <option value="salary_desc">Mayor Salario</option>
                                 <option value="salary_asc">Menor Salario</option>
                             </select>
@@ -1183,18 +1182,18 @@
                                 class="w-full bg-background border border-outline-variant/60 rounded-xl px-2 py-1.5 outline-none text-body-sm font-medium focus:border-primary transition-all">
                                 <option value="">Cualquier fecha</option>
                                 <option value="today">Hoy</option>
-                                <option value="last_3_days">Ãšltimos 3 dÃ­as</option>
-                                <option value="last_week">Ãšltima semana</option>
-                                <option value="last_month">Ãšltimo mes</option>
+                                <option value="last_3_days">Últimos 3 días</option>
+                                <option value="last_week">Última semana</option>
+                                <option value="last_month">Último mes</option>
                             </select>
                         </div>
                         <!-- Category -->
                         <div class="space-y-1">
                             <label
-                                class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/70 px-1">CategorÃ­a</label>
+                                class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/70 px-1">Categoría</label>
                             <select id="filter-category" onchange="loadOffers()"
                                 class="w-full bg-background border border-outline-variant/60 rounded-xl px-2 py-1.5 outline-none text-body-sm font-medium focus:border-primary transition-all">
-                                <option value="">Cualquier categorÃ­a</option>
+                                <option value="">Cualquier categoría</option>
                             </select>
                         </div>
                         <!-- Salary -->
@@ -1207,7 +1206,7 @@
                                 <option value="under_1000">Menos de 1000</option>
                                 <option value="1000_to_2000">1000 a 2000</option>
                                 <option value="2000_to_4000">2000 a 4000</option>
-                                <option value="above_4000">MÃ¡s de 4000</option>
+                                <option value="above_4000">Más de 4000</option>
                             </select>
                         </div>
                         <!-- Work schedule (Jornada) -->
@@ -1256,11 +1255,11 @@
                                 <thead>
                                     <tr
                                         class="bg-surface-container-low border-b border-outline-variant text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/80">
-                                        <th class="px-4 py-3.5 w-12">AcciÃ³n</th>
+                                        <th class="px-4 py-3.5 w-12">Acción</th>
                                         <th class="px-4 py-3.5 w-24">Estado</th>
-                                        <th class="px-4 py-3.5">TÃ­tulo</th>
+                                        <th class="px-4 py-3.5">Título</th>
                                         <th class="px-4 py-3.5">Salario</th>
-                                        <th class="px-4 py-3.5">CategorÃ­a</th>
+                                        <th class="px-4 py-3.5">Categoría</th>
                                         <th class="px-4 py-3.5">Jornada de trabajo</th>
                                         <th class="px-4 py-3.5">Modalidad de trabajo</th>
                                         <th class="px-4 py-3.5">Tipo de contrato</th>
@@ -1297,14 +1296,14 @@
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-lg">
                             <div class="md:col-span-3 space-y-xs">
                                 <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                                    for="offer-title">TÃ­tulo</label>
+                                    for="offer-title">Título</label>
                                 <input
                                     class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
                                     id="offer-title" placeholder="Aa" type="text" required />
                             </div>
                             <div class="space-y-xs">
                                 <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                                    for="offer-pub-date">Fecha de publicaciÃ³n</label>
+                                    for="offer-pub-date">Fecha de publicación</label>
                                 <input
                                     class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
                                     id="offer-pub-date" type="date" required />
@@ -1314,7 +1313,7 @@
                         <!-- Row 2: Description -->
                         <div class="space-y-xs">
                             <label
-                                class="font-label-sm text-label-sm text-on-surface-variant block">DescripciÃ³n</label>
+                                class="font-label-sm text-label-sm text-on-surface-variant block">Descripción</label>
                             <div
                                 class="border border-outline-variant rounded-xl bg-background overflow-hidden flex flex-col">
                                 <!-- Formatting toolbar -->
@@ -1339,7 +1338,7 @@
                                 </div>
                                 <textarea id="offer-description" rows="5"
                                     class="w-full px-4 py-2.5 bg-transparent border-none outline-none font-body-sm text-body-sm text-on-surface focus:ring-0"
-                                    placeholder="DescripciÃ³n..." required></textarea>
+                                    placeholder="Descripción..." required></textarea>
                             </div>
                         </div>
 
@@ -1446,10 +1445,10 @@
                                         </button>
                                     </div>
                                 </div>
-                                <!-- DirecciÃ³n -->
+                                <!-- Dirección -->
                                 <div class="space-y-xs">
                                     <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                                        for="offer-address">DirecciÃ³n</label>
+                                        for="offer-address">Dirección</label>
                                     <div class="relative">
                                         <span
                                             class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">pin_drop</span>
@@ -1490,17 +1489,17 @@
                                         <option value="">Seleccionar...</option>
                                     </select>
                                 </div>
-                                <!-- CategorÃ­a -->
+                                <!-- Categoría -->
                                 <div class="space-y-xs">
                                     <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                                        for="offer-category">CategorÃ­a</label>
+                                        for="offer-category">Categoría</label>
                                     <div class="flex gap-2">
                                         <select id="offer-category"
                                             class="flex-1 px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
                                             required>
                                             <option value="">Seleccionar...</option>
                                         </select>
-                                        <button type="button" onclick="openAddLookupModal('category', 'CategorÃ­a')"
+                                        <button type="button" onclick="openAddLookupModal('category', 'Categoría')"
                                             class="px-3 border border-outline-variant hover:bg-surface-container-high rounded-xl text-primary flex items-center justify-center">
                                             <span class="material-symbols-outlined text-[18px]">add</span>
                                         </button>
@@ -1626,7 +1625,7 @@
                     <input type="hidden" id="form-company-id" value="">
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
-                        <!-- Columna Izquierda: Datos BÃ¡sicos y Contacto -->
+                        <!-- Columna Izquierda: Datos Básicos y Contacto -->
                         <div class="space-y-md">
                             <!-- Vincular Cuenta de Usuario de Empresa -->
                             <div class="space-y-xs" id="container-comp-user-id">
@@ -1680,18 +1679,18 @@
                                 </div>
                             </div>
 
-                            <!-- TelÃ©fono y DirecciÃ³n -->
+                            <!-- Teléfono y Dirección -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
                                 <div class="space-y-xs">
                                     <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                                        for="comp-phone">TelÃ©fono</label>
+                                        for="comp-phone">Teléfono</label>
                                     <input
                                         class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
                                         id="comp-phone" name="phone" placeholder="Ej. 987654321" type="text" required />
                                 </div>
                                 <div class="space-y-xs">
                                     <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                                        for="comp-address">DirecciÃ³n</label>
+                                        for="comp-address">Dirección</label>
                                     <input
                                         class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
                                         id="comp-address" name="address" placeholder="Ej. Av. Larco 456, Miraflores"
@@ -1699,11 +1698,11 @@
                                 </div>
                             </div>
 
-                            <!-- BuzÃ³n de Correo y PÃ¡gina Web -->
+                            <!-- Buzón de Correo y Página Web -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
                                 <div class="space-y-xs">
                                     <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                                        for="comp-mailbox">BuzÃ³n de Postulaciones (Opcional)</label>
+                                        for="comp-mailbox">Buzón de Postulaciones (Opcional)</label>
                                     <input
                                         class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
                                         id="comp-mailbox" name="mailbox" placeholder="Ej. postulaciones@techcorp.com"
@@ -1711,7 +1710,7 @@
                                 </div>
                                 <div class="space-y-xs">
                                     <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                                        for="comp-website">PÃ¡gina Web (Opcional)</label>
+                                        for="comp-website">Página Web (Opcional)</label>
                                     <input
                                         class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
                                         id="comp-website" name="website" placeholder="Ej. www.techcorp.com"
@@ -1720,15 +1719,15 @@
                             </div>
                         </div>
 
-                        <!-- Columna Derecha: DescripciÃ³n y Logo -->
+                        <!-- Columna Derecha: Descripción y Logo -->
                         <div class="space-y-md flex flex-col">
-                            <!-- DescripciÃ³n -->
+                            <!-- Descripción -->
                             <div class="space-y-xs flex-1 flex flex-col">
                                 <label class="font-label-sm text-label-sm text-on-surface-variant block"
                                     for="comp-description">Acerca de la Empresa</label>
                                 <textarea id="comp-description" name="description" rows="4"
                                     class="w-full flex-1 px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm text-on-surface"
-                                    placeholder="CuÃ©ntanos un poco sobre la empresa..."></textarea>
+                                    placeholder="Cuéntanos un poco sobre la empresa..."></textarea>
                             </div>
 
                             <!-- Logotipo Carga / Vista Previa -->
@@ -1752,7 +1751,7 @@
                                             <span class="material-symbols-outlined text-[18px]">upload</span>
                                             Subir Logo
                                         </button>
-                                        <p class="text-[11px] text-on-surface-variant">Formatos: PNG, JPG, JPEG (mÃ¡x.
+                                        <p class="text-[11px] text-on-surface-variant">Formatos: PNG, JPG, JPEG (máx.
                                             2MB)</p>
                                     </div>
                                 </div>
@@ -1803,7 +1802,7 @@
                                 class="w-full px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-body-sm text-on-surface">
                                 <option value="">Todos los estados</option>
                                 <option value="postulated">Postulado</option>
-                                <option value="under_review">En revisiÃ³n</option>
+                                <option value="under_review">En revisión</option>
                                 <option value="accepted">Aceptado</option>
                                 <option value="rejected">Rechazado</option>
                             </select>
@@ -1945,9 +1944,9 @@
                 <div
                     class="bg-surface rounded-xl border border-outline-variant p-2xl text-center space-y-md max-w-xl mx-auto shadow-sm">
                     <span class="material-symbols-outlined text-outline text-6xl">construction</span>
-                    <h2 class="text-headline-md font-headline-md text-primary">SecciÃ³n en Desarrollo</h2>
-                    <p class="text-body-md text-on-surface-variant">PrÃ³ximamente se integrarÃ¡n las funcionalidades
-                        completas correspondientes para este mÃ³dulo del sistema.</p>
+                    <h2 class="text-headline-md font-headline-md text-primary">Sección en Desarrollo</h2>
+                    <p class="text-body-md text-on-surface-variant">Próximamente se integrarán las funcionalidades
+                        completas correspondientes para este módulo del sistema.</p>
                     <button onclick="switchTab('dashboard')"
                         class="px-6 py-2 bg-primary text-on-primary rounded-xl text-label-md font-label-md hover:opacity-90 transition-opacity">
                         Volver al Inicio
@@ -1958,14 +1957,14 @@
         </div>
     </main>
 
-    <!-- ================= MODAL: DETALLES DE POSTULACIÃ“N ================= -->
+    <!-- ================= MODAL: DETALLES DE POSTULACIÓN ================= -->
     <div id="view-app-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/40 p-4">
         <div
             class="w-full max-w-lg bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-xl overflow-hidden transform scale-95 transition-transform duration-300">
             <!-- Header -->
             <div
                 class="flex justify-between items-center px-lg py-md border-b border-outline-variant bg-surface-container-low">
-                <h2 class="text-headline-md font-headline-md text-on-surface">Detalle de PostulaciÃ³n</h2>
+                <h2 class="text-headline-md font-headline-md text-on-surface">Detalle de Postulación</h2>
                 <button onclick="toggleAppModal()"
                     class="text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined">close</span>
@@ -1979,17 +1978,17 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
                     <div>
                         <span class="text-label-sm font-label-sm text-on-surface-variant block">Candidato</span>
-                        <span id="detail-app-name" class="text-body-md font-bold text-on-surface">MarÃ­a Espinoza</span>
+                        <span id="detail-app-name" class="text-body-md font-bold text-on-surface">María Espinoza</span>
                     </div>
                     <div>
                         <span class="text-label-sm font-label-sm text-on-surface-variant block">Programa de
                             Estudio</span>
-                        <span id="detail-app-program" class="text-body-md text-on-surface">ComputaciÃ³n e
-                            InformÃ¡tica</span>
+                        <span id="detail-app-program" class="text-body-md text-on-surface">Computación e
+                            Informática</span>
                     </div>
                     <div>
                         <span class="text-label-sm font-label-sm text-on-surface-variant block">Puesto / Oferta</span>
-                        <span id="detail-app-offer" class="text-body-md text-on-surface">CientÃ­fico de Datos</span>
+                        <span id="detail-app-offer" class="text-body-md text-on-surface">Científico de Datos</span>
                     </div>
                     <div>
                         <span class="text-label-sm font-label-sm text-on-surface-variant block">Empresa</span>
@@ -2001,7 +2000,7 @@
 
                 <!-- Curriculum Vitae (CV) -->
                 <div class="space-y-xs">
-                    <span class="text-label-sm font-label-sm text-on-surface-variant block">CurrÃ­culum Vitae
+                    <span class="text-label-sm font-label-sm text-on-surface-variant block">Currículum Vitae
                         (CV)</span>
                     <div
                         class="flex items-center justify-between p-sm bg-surface-container-low rounded-xl border border-outline-variant">
@@ -2021,10 +2020,10 @@
                 <!-- Message from Candidate -->
                 <div class="space-y-xs">
                     <span class="text-label-sm font-label-sm text-on-surface-variant block">Mensaje /
-                        PresentaciÃ³n</span>
+                        Presentación</span>
                     <div id="detail-app-message"
                         class="p-sm bg-surface-container-low rounded-xl border border-outline-variant text-body-sm text-on-surface-variant whitespace-pre-wrap max-h-32 overflow-y-auto">
-                        No se adjuntÃ³ mensaje de presentaciÃ³n.
+                        No se adjuntó mensaje de presentación.
                     </div>
                 </div>
 
@@ -2039,7 +2038,7 @@
                             class="w-full px-4 py-2 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
                             required>
                             <option value="postulated">Postulado</option>
-                            <option value="under_review">En revisiÃ³n</option>
+                            <option value="under_review">En revisión</option>
                             <option value="accepted">Aceptado</option>
                             <option value="rejected">Rechazado</option>
                         </select>
@@ -2047,10 +2046,10 @@
 
                     <div class="space-y-xs">
                         <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                            for="detail-app-feedback">RetroalimentaciÃ³n / Notas (Opcional)</label>
+                            for="detail-app-feedback">Retroalimentación / Notas (Opcional)</label>
                         <textarea id="detail-app-feedback" rows="3"
                             class="w-full px-4 py-2 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
-                            placeholder="Escribe aquÃ­ los comentarios o detalles del cambio de estado..."></textarea>
+                            placeholder="Escribe aquí los comentarios o detalles del cambio de estado..."></textarea>
                         <p id="detail-app-feedback-date" class="text-[10px] text-on-surface-variant italic hidden"></p>
                     </div>
                 </div>
@@ -2106,7 +2105,7 @@
             class="w-full max-w-md bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-xl overflow-hidden transform scale-95 transition-transform duration-300">
             <div
                 class="flex justify-between items-center px-lg py-md border-b border-outline-variant bg-surface-container-low">
-                <h2 id="lookup-modal-title" class="text-headline-md font-headline-md text-on-surface">Agregar opciÃ³n
+                <h2 id="lookup-modal-title" class="text-headline-md font-headline-md text-on-surface">Agregar opción
                 </h2>
                 <button onclick="toggleLookupModal()"
                     class="text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full flex items-center justify-center">
@@ -2117,7 +2116,7 @@
                 <input type="hidden" id="lookup-type" value="">
                 <div class="space-y-xs">
                     <label class="font-label-sm text-label-sm text-on-surface-variant block" for="lookup-name">Nombre de
-                        la opciÃ³n</label>
+                        la opción</label>
                     <input
                         class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
                         id="lookup-name" placeholder="Ej. Tiempo parcial" type="text" required />
@@ -2143,7 +2142,7 @@
             <!-- Header -->
             <div
                 class="flex justify-between items-center px-lg py-md border-b border-outline-variant bg-surface-container-low flex-shrink-0">
-                <h2 class="text-headline-md font-headline-md text-on-surface">PrevisualizaciÃ³n de Oferta</h2>
+                <h2 class="text-headline-md font-headline-md text-on-surface">Previsualización de Oferta</h2>
                 <button onclick="togglePreviewOfferModal()"
                     class="text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined">close</span>
@@ -2231,14 +2230,14 @@
         </button>
     </div>
 
-    <!-- ================= MODAL: CREACIÃ“N DE USUARIO ================= -->
+    <!-- ================= MODAL: CREACIÓN DE USUARIO ================= -->
     <div id="create-user-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/40 p-4">
         <div
             class="w-full max-w-4xl bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-xl overflow-hidden transform scale-95 transition-transform duration-300">
             <!-- Header -->
             <div
                 class="flex justify-between items-center px-lg py-md border-b border-outline-variant bg-surface-container-low">
-                <h2 class="text-headline-md font-headline-md text-on-surface">CreaciÃ³n de usuario</h2>
+                <h2 class="text-headline-md font-headline-md text-on-surface">Creación de usuario</h2>
                 <button onclick="toggleCreateModal()"
                     class="text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined">close</span>
@@ -2255,7 +2254,7 @@
                             for="form-names">Nombres</label>
                         <input
                             class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-student-accent/20 focus:border-student-accent outline-none transition-all font-body-sm text-body-sm"
-                            id="form-names" placeholder="Ej. Juan PÃ©rez" type="text" required />
+                            id="form-names" placeholder="Ej. Juan Pérez" type="text" required />
                     </div>
 
                     <!-- Email -->
@@ -2267,10 +2266,10 @@
                             id="form-email" placeholder="Ej. juan.perez@talentum.edu.pe" type="email" required />
                     </div>
 
-                    <!-- TelÃ©fono -->
+                    <!-- Teléfono -->
                     <div class="space-y-xs">
                         <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                            for="form-phone">TelÃ©fono</label>
+                            for="form-phone">Teléfono</label>
                         <input
                             class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-student-accent/20 focus:border-student-accent outline-none transition-all font-body-sm text-body-sm"
                             id="form-phone" placeholder="Ej. 987654321" type="text" />
@@ -2328,14 +2327,14 @@
         </div>
     </div>
 
-    <!-- ================= MODAL: IMPORTACIÃ“N DE USUARIOS ================= -->
+    <!-- ================= MODAL: IMPORTACIÓN DE USUARIOS ================= -->
     <div id="import-users-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/40 p-4">
         <div
             class="w-full max-w-2xl bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-xl overflow-hidden transform scale-95 transition-transform duration-300">
             <!-- Header -->
             <div
                 class="flex justify-between items-center px-lg py-md border-b border-outline-variant bg-surface-container-low">
-                <h2 class="text-headline-md font-headline-md text-on-surface">ImportaciÃ³n de usuarios</h2>
+                <h2 class="text-headline-md font-headline-md text-on-surface">Importación de usuarios</h2>
                 <button onclick="toggleImportModal()"
                     class="text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined">close</span>
@@ -2348,7 +2347,7 @@
                     <span class="material-symbols-outlined text-primary text-3xl">info</span>
                     <div class="space-y-1">
                         <p class="font-bold text-body-sm leading-none text-primary">Instrucciones</p>
-                        <p class="text-body-sm">Descarga la plantilla oficial, completa la informaciÃ³n de los usuarios
+                        <p class="text-body-sm">Descarga la plantilla oficial, completa la información de los usuarios
                             respetando las columnas e importa el archivo Excel.</p>
                     </div>
                 </div>
@@ -2359,7 +2358,7 @@
                         <span class="material-symbols-outlined text-green-700 text-3xl">description</span>
                         <div>
                             <p class="font-semibold text-body-sm leading-tight text-on-surface">Plantilla de
-                                ImportaciÃ³n</p>
+                                Importación</p>
                             <p class="text-[11px] text-on-surface-variant">Importacion de usuarios.xlsx</p>
                         </div>
                     </div>
@@ -2419,7 +2418,7 @@
         </div>
     </div>
 
-    <!-- ================= MODAL: CAMBIO DE CONTRASEÃ‘A ================= -->
+    <!-- ================= MODAL: CAMBIO DE CONTRASEÑA ================= -->
     <!-- ================= MODAL: MI PERFIL ADMIN ================= -->
     <div id="admin-profile-modal"
         class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm p-3 md:p-6 overflow-y-auto">
@@ -2689,7 +2688,7 @@
             <!-- Header -->
             <div
                 class="flex justify-between items-center px-lg py-md border-b border-outline-variant bg-surface-container-low">
-                <h2 class="text-headline-md font-headline-md text-on-surface">Cambiar contraseÃ±a</h2>
+                <h2 class="text-headline-md font-headline-md text-on-surface">Cambiar contraseña</h2>
                 <button onclick="toggleChangePasswordModal()"
                     class="text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined">close</span>
@@ -2700,15 +2699,15 @@
             <form id="change-password-form" onsubmit="handleChangePasswordSubmit(event)" class="p-lg space-y-lg">
                 <input type="hidden" id="change-pass-user-id" value="">
                 <div class="space-y-md">
-                    <p class="text-body-sm text-on-surface-variant">Establece una nueva contraseÃ±a para <span
+                    <p class="text-body-sm text-on-surface-variant">Establece una nueva contraseña para <span
                             id="change-pass-username" class="font-semibold text-on-surface"></span>.</p>
 
                     <div class="space-y-xs">
                         <label class="font-label-sm text-label-sm text-on-surface-variant block"
-                            for="new-password">Nueva ContraseÃ±a</label>
+                            for="new-password">Nueva Contraseña</label>
                         <input
                             class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-student-accent/20 focus:border-student-accent outline-none transition-all font-body-sm text-body-sm"
-                            id="new-password" placeholder="MÃ­nimo 6 caracteres" type="password" required />
+                            id="new-password" placeholder="Mínimo 6 caracteres" type="password" required />
                     </div>
                 </div>
 
@@ -2731,7 +2730,7 @@
     <div id="toast"
         class="fixed bottom-5 right-5 bg-primary text-on-primary px-lg py-md rounded-xl shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-sm">
         <span class="material-symbols-outlined" id="toast-icon">check_circle</span>
-        <span id="toast-message" class="text-body-sm font-semibold">Â¡OperaciÃ³n realizada con Ã©xito!</span>
+        <span id="toast-message" class="text-body-sm font-semibold">¡Operación realizada con éxito!</span>
     </div>
 
     <script>
@@ -2873,7 +2872,7 @@
             document.getElementById('form-user-id').value = '';
 
             const modal = document.getElementById('create-user-modal');
-            modal.querySelector('h2').textContent = 'CreaciÃ³n de usuario';
+            modal.querySelector('h2').textContent = 'Creación de usuario';
             modal.querySelector('button[type="submit"]').textContent = 'Agregar';
 
             if (modal.classList.contains('hidden')) {
@@ -3018,12 +3017,12 @@
 
                                 progressBar.style.width = '100%';
                                 progressPercent.textContent = '100%';
-                                progressStatus.textContent = 'Â¡ImportaciÃ³n completada con Ã©xito!';
+                                progressStatus.textContent = '¡Importación completada con éxito!';
 
                                 progressSpinner.className = 'material-symbols-outlined text-green-600';
                                 progressSpinner.textContent = 'check_circle';
 
-                                showToast(response.message || 'Â¡Usuarios importados exitosamente!');
+                                showToast(response.message || '¡Usuarios importados exitosamente!');
 
                                 if (response.users && response.users.length > 0) {
                                     response.users.forEach(user => {
@@ -3052,7 +3051,7 @@
                             }
                         }, 40);
                     } else {
-                        showImportError(response.message || 'Error en la importaciÃ³n.');
+                        showImportError(response.message || 'Error en la importación.');
                     }
                 } else {
                     let errMsg = 'Error en el servidor.';
@@ -3066,7 +3065,7 @@
 
             xhr.onerror = function () {
                 clearInterval(smoothInterval);
-                showImportError('Error de red durante la importaciÃ³n.');
+                showImportError('Error de red durante la importación.');
             };
 
             // Simulate database insertion progress from 50% to 85% while waiting for PHP response
@@ -3139,7 +3138,7 @@
                 <button onclick="editUser(${id}, '${escName}', '${escEmail}', '${escPhone}', ${roleId}, '${escDocType}', '${escDocNum}')" class="p-1.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors" title="Editar Usuario">
                     <span class="material-symbols-outlined text-[20px]">edit</span>
                 </button>
-                <button onclick="openChangePasswordModal(${id}, '${escName}')" class="p-1.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors" title="Cambiar ContraseÃ±a">
+                <button onclick="openChangePasswordModal(${id}, '${escName}')" class="p-1.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors" title="Cambiar Contraseña">
                     <span class="material-symbols-outlined text-[20px]">lock_reset</span>
                 </button>
                 <button onclick="deleteUserRow(${id}, '${escName}')" class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar Usuario">
@@ -3217,10 +3216,10 @@
                         const user = data.user;
                         if (id) {
                             updateUserRow(user.id, names, email, docType, docNum, roleId, roleName, user.is_active, phone);
-                            showToast(`Â¡Usuario "${names}" modificado con Ã©xito!`);
+                            showToast(`¡Usuario "${names}" modificado con éxito!`);
                         } else {
                             addNewUserToTable(user.id, names, email, docType, docNum, roleId, roleName, user.is_active, phone);
-                            showToast(`Â¡Usuario "${names}" agregado con Ã©xito!`);
+                            showToast(`¡Usuario "${names}" agregado con éxito!`);
                         }
                         toggleCreateModal();
                         document.getElementById('create-user-form').reset();
@@ -3263,7 +3262,7 @@
 
         // Delete user from the database
         function deleteUserRow(id, username) {
-            if (confirm(`Â¿EstÃ¡s seguro de que deseas eliminar permanentemente al usuario "${username}"?`)) {
+            if (confirm(`¿Estás seguro de que deseas eliminar permanentemente al usuario "${username}"?`)) {
                 const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 fetch(`/admin/users/${id}`, {
@@ -3289,8 +3288,8 @@
             }
         }
 
-        // ================= FILTRO POR ROL, SELECCIÃ“N MÃšLTIPLE Y PAGINACIÃ“N =================
-        // Filtro de usuarios por bÃºsqueda (se activa con Enter o botÃ³n Buscar)
+        // ================= FILTRO POR ROL, SELECCIÓN MÚLTIPLE Y PAGINACIÓN =================
+        // Filtro de usuarios por búsqueda (se activa con Enter o botón Buscar)
         function filterUsers() {
             const url = new URL(window.location.href);
             const searchInput = document.getElementById('search-users-input');
@@ -3423,7 +3422,7 @@
             }
         });
 
-        // Limpiar campo de bÃºsqueda
+        // Limpiar campo de búsqueda
         function clearSearch() {
             const searchInput = document.getElementById('search-users-input');
             if (searchInput) searchInput.value = '';
@@ -3492,7 +3491,7 @@
             }
         }
 
-        // Limpiar selecciÃ³n
+        // Limpiar selección
         function clearUserSelection() {
             const checkboxes = document.querySelectorAll('.user-checkbox');
             checkboxes.forEach(cb => cb.checked = false);
@@ -3509,7 +3508,7 @@
                 return;
             }
 
-            if (!confirm(`Â¿EstÃ¡s seguro de que deseas eliminar ${ids.length} usuario(s) seleccionado(s)?`)) {
+            if (!confirm(`¿Estás seguro de que deseas eliminar ${ids.length} usuario(s) seleccionado(s)?`)) {
                 return;
             }
 
@@ -3810,14 +3809,14 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        showToast('Â¡ContraseÃ±a restablecida exitosamente!');
+                        showToast('¡Contraseña restablecida exitosamente!');
                         toggleChangePasswordModal();
                     } else {
-                        showToast(data.message || 'Error al cambiar la contraseÃ±a.', 'error');
+                        showToast(data.message || 'Error al cambiar la contraseña.', 'error');
                     }
                 })
                 .catch(err => {
-                    showToast('Error de red al intentar restablecer contraseÃ±a.', 'error');
+                    showToast('Error de red al intentar restablecer contraseña.', 'error');
                 });
         }
 
@@ -3847,11 +3846,11 @@
 
             const palette = document.getElementById('color-palette');
             const checks = palette.querySelectorAll('span.material-symbols-outlined');
-            checks.forEach(c => c.classList.add('hidden'));
+            checks.forEach(c => c.style.display = 'none');
 
             const check = btn.querySelector('span.material-symbols-outlined');
             if (check) {
-                check.classList.remove('hidden');
+                check.style.display = 'inline-block';
             }
         }
 
@@ -3886,7 +3885,7 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        showToast('Â¡Configuraciones actualizadas con Ã©xito!');
+                        showToast('¡Configuraciones actualizadas con éxito!');
                         setTimeout(() => {
                             location.reload();
                         }, 1000);
@@ -3927,31 +3926,31 @@
 
         // PERU DEPARTMENTS & PROVINCES DATA
         const PERU_DEPARTMENTS = {
-            "Amazonas": ["Chachapoyas", "Bagua", "BongarÃ¡", "Condorcanqui", "Luya", "RodrÃ­guez de Mendoza", "Utcubamba"],
-            "Ãncash": ["Huaraz", "Aija", "Antonio Raymondi", "AsunciÃ³n", "Bolognesi", "Carhuaz", "Carlos FermÃ­n Fitzcarrald", "Casma", "Corongo", "DomÃ©stico", "Huari", "Huarmey", "Huaylas", "Mariscal Luzuriaga", "Ocros", "Pallasca", "Pomabamba", "Recuay", "Santa", "Sihuas", "Yungay"],
-            "ApurÃ­mac": ["Abancay", "Andahuaylas", "Antabamba", "Cotabambas", "Grau", "Chincheros", "Aymaraes"],
-            "Arequipa": ["Arequipa", "CamanÃ¡", "CaravelÃ­", "Castilla", "Caylloma", "Condesuyos", "Islay", "La UniÃ³n"],
+            "Amazonas": ["Chachapoyas", "Bagua", "Bongará", "Condorcanqui", "Luya", "Rodríguez de Mendoza", "Utcubamba"],
+            "Áncash": ["Huaraz", "Aija", "Antonio Raymondi", "Asunción", "Bolognesi", "Carhuaz", "Carlos Fermín Fitzcarrald", "Casma", "Corongo", "Doméstico", "Huari", "Huarmey", "Huaylas", "Mariscal Luzuriaga", "Ocros", "Pallasca", "Pomabamba", "Recuay", "Santa", "Sihuas", "Yungay"],
+            "Apurímac": ["Abancay", "Andahuaylas", "Antabamba", "Cotabambas", "Grau", "Chincheros", "Aymaraes"],
+            "Arequipa": ["Arequipa", "Camaná", "Caravelí", "Castilla", "Caylloma", "Condesuyos", "Islay", "La Unión"],
             "Ayacucho": ["Cangallo", "Huamanga", "Huanca Sancos", "Huanta", "La Mar", "Lucanas", "Parinacochas", "Paucar del Sara Sara", "Sucre", "Victor Fajardo", "Vilcas Huaman"],
-            "Cajamarca": ["Cajamarca", "Cajabamba", "CelendÃ­n", "Chota", "ContumazÃ¡", "Cutervo", "Hualgayoc", "JaÃ©n", "San Ignacio", "San Marcos", "San Miguel", "San Pablo", "Santa Cruz"],
+            "Cajamarca": ["Cajamarca", "Cajabamba", "Celendín", "Chota", "Contumazá", "Cutervo", "Hualgayoc", "Jaén", "San Ignacio", "San Marcos", "San Miguel", "San Pablo", "Santa Cruz"],
             "Callao": ["Callao"],
-            "Cusco": ["Cusco", "Acomayo", "Anta", "Calca", "Canas", "Canchis", "Chumbivilcas", "Espinar", "La ConvenciÃ³n", "Paruro", "Quispicanchi", "Urubamba"],
-            "Huancavelica": ["Huancavelica", "Acobamba", "Angaraes", "Castrovirreyna", "Churcampa", "HuaytarÃ¡", "Tayacaja"],
-            "HuÃ¡nuco": ["HuÃ¡nuco", "Ambo", "Dos de Mayo", "Huacaybamba", "HuamalÃ­es", "Leoncio Prado", "MaraÃ±Ã³n", "Pachitea", "Puerto Inca", "Lauricocha", "Yarowilca"],
+            "Cusco": ["Cusco", "Acomayo", "Anta", "Calca", "Canas", "Canchis", "Chumbivilcas", "Espinar", "La Convención", "Paruro", "Quispicanchi", "Urubamba"],
+            "Huancavelica": ["Huancavelica", "Acobamba", "Angaraes", "Castrovirreyna", "Churcampa", "Huaytará", "Tayacaja"],
+            "Huánuco": ["Huánuco", "Ambo", "Dos de Mayo", "Huacaybamba", "Huamalíes", "Leoncio Prado", "Marañón", "Pachitea", "Puerto Inca", "Lauricocha", "Yarowilca"],
             "Ica": ["Ica", "Chincha", "Nasca", "Palpa", "Pisco"],
-            "JunÃ­n": ["Huancayo", "Chanchamayo", "Chupaca", "ConcepciÃ³n", "Jauja", "JunÃ­n", "Satipo", "Tarma", "Yauli"],
-            "La Libertad": ["Trujillo", "Ascope", "BolÃ­var", "ChepÃ©n", "Gran ChimÃº", "JulcÃ¡n", "Otuzco", "Pacasmayo", "Pataz", "SÃ¡nchez CarriÃ³n", "Santiago de Chuco", "VirÃº"],
-            "Lambayeque": ["Chiclayo", "FerreÃ±afe", "Lambayeque"],
-            "Lima": ["Lima", "Barranca", "Cajatambo", "Canta", "CaÃ±ete", "Huaral", "HuarochirÃ­", "Huaura", "OyÃ³n", "Yauyos"],
-            "Loreto": ["Iquitos", "Alto Amazonas", "Loreto", "Mariscal RamÃ³n Castilla", "Requena", "Ucayali", "Datem del MaraÃ±Ã³n", "Putumayo"],
+            "Junín": ["Huancayo", "Chanchamayo", "Chupaca", "Concepción", "Jauja", "Junín", "Satipo", "Tarma", "Yauli"],
+            "La Libertad": ["Trujillo", "Ascope", "Bolívar", "Chepén", "Gran Chimú", "Julcán", "Otuzco", "Pacasmayo", "Pataz", "Sánchez Carrión", "Santiago de Chuco", "Virú"],
+            "Lambayeque": ["Chiclayo", "Ferreñafe", "Lambayeque"],
+            "Lima": ["Lima", "Barranca", "Cajatambo", "Canta", "Cañete", "Huaral", "Huarochirí", "Huaura", "Oyón", "Yauyos"],
+            "Loreto": ["Iquitos", "Alto Amazonas", "Loreto", "Mariscal Ramón Castilla", "Requena", "Ucayali", "Datem del Marañón", "Putumayo"],
             "Madre de Dios": ["Tambopata", "Manu", "Tahuamanu"],
-            "Moquegua": ["Mariscal Nieto", "General SÃ¡nchez Cerro", "Ilo"],
-            "Pasco": ["Pasco", "Daniel Alcides CarriÃ³n", "Oxapampa"],
-            "Piura": ["Piura", "Ayabaca", "Huancabamba", "MorropÃ³n", "Paita", "Sechura", "Sullana", "Talara"],
-            "Puno": ["Puno", "AzÃ¡ngaro", "Carabaya", "Chucuito", "El Collao", "HuancanÃ©", "Lampa", "Melgar", "Moho", "San Antonio de Putina", "San RomÃ¡n", "Sandia", "Yunguyo"],
-            "San MartÃ­n": ["Moyobamba", "Bellavista", "El Dorado", "Huallaga", "Lamas", "Mariscal CÃ¡ceres", "Picota", "Rioja", "San MartÃ­n", "Tocache"],
+            "Moquegua": ["Mariscal Nieto", "General Sánchez Cerro", "Ilo"],
+            "Pasco": ["Pasco", "Daniel Alcides Carrión", "Oxapampa"],
+            "Piura": ["Piura", "Ayabaca", "Huancabamba", "Morropón", "Paita", "Sechura", "Sullana", "Talara"],
+            "Puno": ["Puno", "Azángaro", "Carabaya", "Chucuito", "El Collao", "Huancané", "Lampa", "Melgar", "Moho", "San Antonio de Putina", "San Román", "Sandia", "Yunguyo"],
+            "San Martín": ["Moyobamba", "Bellavista", "El Dorado", "Huallaga", "Lamas", "Mariscal Cáceres", "Picota", "Rioja", "San Martín", "Tocache"],
             "Tacna": ["Tacna", "Candarave", "Jorge Basadre", "Tarata"],
             "Tumbes": ["Tumbes", "Contralmirante Villar", "Zarumilla"],
-            "Ucayali": ["Coronel Portillo", "Atalaya", "Padre Abad", "PurÃºs"]
+            "Ucayali": ["Coronel Portillo", "Atalaya", "Padre Abad", "Purús"]
         };
 
         let metadataLoaded = false;
@@ -4012,7 +4011,7 @@
                 .then(data => {
                     if (data.success) {
                         // Populate selects in filters
-                        populateSelect('filter-category', data.categories, 'id', 'name', 'Cualquier categorÃ­a');
+                        populateSelect('filter-category', data.categories, 'id', 'name', 'Cualquier categoría');
                         populateSelect('filter-work-schedule', data.work_schedules, 'id', 'name', 'Cualquier jornada');
                         populateSelect('filter-location', data.locations, 'id', 'name', 'Cualquier lugar');
                         populateSelect('filter-contract-type', data.contract_types, 'id', 'name', 'Cualquier contrato');
@@ -4482,7 +4481,7 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        showToast(id ? 'Â¡Oferta actualizada con Ã©xito!' : 'Â¡Oferta creada con Ã©xito!');
+                        showToast(id ? '¡Oferta actualizada con éxito!' : '¡Oferta creada con éxito!');
                         hideCreateOfferForm();
                     } else {
                         showToast(data.message || 'Error al guardar la oferta.', 'error');
@@ -4544,7 +4543,7 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        showToast('OpciÃ³n agregada exitosamente.');
+                        showToast('Opción agregada exitosamente.');
 
                         // Append to selection field and select it
                         const select = document.getElementById(activeLookupSelectId);
@@ -4572,11 +4571,11 @@
 
                         toggleLookupModal();
                     } else {
-                        showToast(data.message || 'Error al agregar opciÃ³n.', 'error');
+                        showToast(data.message || 'Error al agregar opción.', 'error');
                     }
                 })
                 .catch(err => {
-                    showToast('Error de red al agregar opciÃ³n.', 'error');
+                    showToast('Error de red al agregar opción.', 'error');
                 });
         }
 
@@ -4613,7 +4612,7 @@
                     openPreviewModal(currentOfferId);
                     break;
                 case 'applicants':
-                    showToast('MÃ³dulo de Postulaciones en desarrollo.', 'warning');
+                    showToast('Módulo de Postulaciones en desarrollo.', 'warning');
                     break;
                 case 'share':
                     copyShareLink(currentOfferId);
@@ -4641,7 +4640,7 @@
             const link = `${window.location.origin}/offers/${id}`;
             navigator.clipboard.writeText(link)
                 .then(() => {
-                    showToast('Â¡Enlace de oferta copiado al portapapeles!');
+                    showToast('¡Enlace de oferta copiado al portapapeles!');
                 })
                 .catch(err => {
                     showToast('Error al copiar enlace.', 'error');
@@ -4677,7 +4676,7 @@
 
         // Delete Offer
         function deleteOffer(id) {
-            if (!confirm('Â¿EstÃ¡s seguro de que deseas eliminar esta oferta laboral?')) return;
+            if (!confirm('¿Estás seguro de que deseas eliminar esta oferta laboral?')) return;
 
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -4751,7 +4750,7 @@
         function openPreviewModal(id) {
             togglePreviewOfferModal();
             const content = document.getElementById('preview-offer-content');
-            content.innerHTML = '<div class="text-center py-xl">Cargando previsualizaciÃ³n...</div>';
+            content.innerHTML = '<div class="text-center py-xl">Cargando previsualización...</div>';
 
             fetch(`/admin/offers/${id}`, {
                 method: 'GET',
@@ -4805,7 +4804,7 @@
                                 <span class="font-bold text-body-sm text-on-surface text-green-700">${salaryText}</span>
                             </div>
                             <div class="p-md border border-outline-variant rounded-xl bg-surface-container-low">
-                                <span class="block text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/80">PublicaciÃ³n</span>
+                                <span class="block text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/80">Publicación</span>
                                 <span class="font-bold text-body-sm text-on-surface">${new Date(offer.publication_date).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                             </div>
                         </div>
@@ -4813,7 +4812,7 @@
                         <!-- Details Section -->
                         <div class="space-y-md">
                             <div>
-                                <h3 class="font-bold text-body-sm text-on-surface border-b border-outline-variant/60 pb-1 mb-2">DescripciÃ³n del puesto</h3>
+                                <h3 class="font-bold text-body-sm text-on-surface border-b border-outline-variant/60 pb-1 mb-2">Descripción del puesto</h3>
                                 <p class="text-body-sm leading-relaxed">${nl2br(offer.description)}</p>
                             </div>
                             <div>
@@ -4933,7 +4932,7 @@
                     <div class="space-y-0.5 text-body-sm text-on-surface-variant font-medium">
                         <p><span class="text-outline">Email:</span> <span class="text-on-background truncate block max-w-[200px] sm:max-w-none md:max-w-[150px] lg:max-w-[200px] xl:max-w-none" title="${company.email}">${company.email}</span></p>
                         <p><span class="text-outline">RUC:</span> <span class="text-on-background font-semibold">${company.ruc}</span></p>
-                        <p><span class="text-outline">TelÃ©fono:</span> <span class="text-on-background">${company.phone || '-'}</span></p>
+                        <p><span class="text-outline">Teléfono:</span> <span class="text-on-background">${company.phone || '-'}</span></p>
                         <p><span class="text-outline">NÂ° Ofertas:</span> <span class="text-on-background font-bold">${company.offers_count || 0}</span></p>
                     </div>
                     <div class="pt-2">
@@ -4961,7 +4960,7 @@
             const verifyText = dropdown.querySelector('#comp-verify-menu-text');
             const verifyIcon = dropdown.querySelector('#comp-verify-menu-icon');
             if (isVerified) {
-                verifyText.textContent = 'Quitar VerificaciÃ³n';
+                verifyText.textContent = 'Quitar Verificación';
                 verifyIcon.textContent = 'block';
             } else {
                 verifyText.textContent = 'Verificar Empresa';
@@ -5018,7 +5017,7 @@
                         showToast(data.message);
                         loadCompanies(); // Reload list
                     } else {
-                        showToast(data.message || 'Error al cambiar verificaciÃ³n.', 'error');
+                        showToast(data.message || 'Error al cambiar verificación.', 'error');
                     }
                 })
                 .catch(err => {
@@ -5031,7 +5030,7 @@
             const company = companiesList.find(c => c.id === id);
             const name = company ? company.name : 'esta empresa';
 
-            if (confirm(`Â¿EstÃ¡s seguro de que deseas eliminar permanentemente a "${name}" y todos sus usuarios/ofertas asociados?`)) {
+            if (confirm(`¿Estás seguro de que deseas eliminar permanentemente a "${name}" y todos sus usuarios/ofertas asociados?`)) {
                 const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 fetch(`/admin/companies/${id}`, {
@@ -5279,7 +5278,7 @@
                     statusLabel = 'Postulado';
                 } else if (app.status === 'under_review') {
                     statusBadge = 'bg-amber-100 text-amber-800';
-                    statusLabel = 'En revisiÃ³n';
+                    statusLabel = 'En revisión';
                 } else if (app.status === 'accepted') {
                     statusBadge = 'bg-green-100 text-green-800';
                     statusLabel = 'Aceptado';
@@ -5320,7 +5319,7 @@
                             <button onclick="openAppDetail(${app.id})" class="p-2 hover:bg-surface-container-high rounded-full text-primary flex items-center justify-center transition-colors" title="Ver Detalle / Evaluar">
                                 <span class="material-symbols-outlined text-[20px]">visibility</span>
                             </button>
-                            <button onclick="deleteApplication(${app.id})" class="p-2 hover:bg-red-50 rounded-full text-red-600 flex items-center justify-center transition-colors" title="Eliminar PostulaciÃ³n">
+                            <button onclick="deleteApplication(${app.id})" class="p-2 hover:bg-red-50 rounded-full text-red-600 flex items-center justify-center transition-colors" title="Eliminar Postulación">
                                 <span class="material-symbols-outlined text-[20px]">delete</span>
                             </button>
                         </div>
@@ -5388,12 +5387,12 @@
             } else {
                 cvLink.href = '#';
                 cvLink.classList.add('hidden');
-                cvName.textContent = 'No se adjuntÃ³ CV';
+                cvName.textContent = 'No se adjuntó CV';
             }
 
             // Message
             const msgDiv = document.getElementById('detail-app-message');
-            msgDiv.textContent = app.message || 'No se adjuntÃ³ mensaje de presentaciÃ³n.';
+            msgDiv.textContent = app.message || 'No se adjuntó mensaje de presentación.';
 
             // Status & feedback
             document.getElementById('detail-app-status').value = app.status || 'postulated';
@@ -5402,7 +5401,7 @@
             const feedbackDate = document.getElementById('detail-app-feedback-date');
             if (app.feedback_date) {
                 const dateStr = new Date(app.feedback_date).toLocaleDateString('es-PE', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                feedbackDate.textContent = `Ãšltima retroalimentaciÃ³n: ${dateStr}`;
+                feedbackDate.textContent = `Última retroalimentación: ${dateStr}`;
                 feedbackDate.classList.remove('hidden');
             } else {
                 feedbackDate.classList.add('hidden');
@@ -5444,7 +5443,7 @@
                         toggleAppModal();
                         loadApplications(); // reload
                     } else {
-                        showToast(data.message || 'Error al guardar estado de postulaciÃ³n.', 'error');
+                        showToast(data.message || 'Error al guardar estado de postulación.', 'error');
                     }
                 })
                 .catch(err => {
@@ -5456,7 +5455,7 @@
 
         // Delete Application
         function deleteApplication(id) {
-            if (confirm('Â¿EstÃ¡ seguro de que desea eliminar permanentemente esta postulaciÃ³n? Esta acciÃ³n no se puede deshacer.')) {
+            if (confirm('¿Está seguro de que desea eliminar permanentemente esta postulación? Esta acción no se puede deshacer.')) {
                 const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 fetch(`/admin/applications/${id}`, {
@@ -5478,7 +5477,7 @@
                             // update local state
                             applicationsList = applicationsList.filter(a => a.id !== id);
                         } else {
-                            showToast(data.message || 'Error al eliminar postulaciÃ³n.', 'error');
+                            showToast(data.message || 'Error al eliminar postulación.', 'error');
                         }
                     })
                     .catch(err => {
