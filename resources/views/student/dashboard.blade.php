@@ -386,39 +386,46 @@
         <div id="panel-cvs" class="tab-panel space-y-xl hidden">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
                 <!-- Upload Panel -->
-                <div class="lg:col-span-1 bg-surface-container-lowest border-2 border-dashed border-outline-variant rounded-2xl p-lg flex flex-col items-center justify-center text-center hover:border-primary-container transition-all cursor-pointer group">
+                <div onclick="document.getElementById('cv-file-input').click()" class="lg:col-span-1 bg-surface-container-lowest border-2 border-dashed border-outline-variant rounded-2xl p-lg flex flex-col items-center justify-center text-center hover:border-primary transition-all cursor-pointer group">
                     <div class="w-12 h-12 rounded-full bg-primary-fixed text-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-2xl">cloud_upload</span>
                     </div>
                     <h3 class="font-headline-sm text-[16px] font-bold text-on-surface mb-2">Sube un nuevo Currículum</h3>
                     <p class="text-body-sm text-on-surface-variant mb-4">Soporta formato PDF (Máx. 5MB).</p>
                     <button class="px-4 py-2 bg-primary text-on-primary rounded-xl text-label-md font-label-md font-semibold hover:bg-primary/95 transition-all">Seleccionar Archivo</button>
+                    <form id="cv-upload-form" class="hidden">
+                        @csrf
+                        <input type="file" id="cv-file-input" name="cv" accept=".pdf" onchange="uploadCv(this)">
+                    </form>
                 </div>
                 
                 <!-- Document List -->
                 <div class="lg:col-span-2 bg-surface-container-lowest rounded-2xl border border-outline-variant p-lg shadow-sm">
                     <h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Mis Currículums Subidos</h3>
-                    <div class="space-y-md">
-                        <!-- CV Item 1 -->
-                        <div class="flex items-center justify-between p-md bg-surface-container-low rounded-xl border border-outline-variant">
+                    <div id="cv-list-container" class="space-y-md">
+                        @forelse($cvs as $cv)
+                        <div id="cv-item-{{ $cv->id }}" class="flex items-center justify-between p-md bg-surface-container-low rounded-xl border border-outline-variant">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-lg bg-red-100 text-red-700 flex items-center justify-center shrink-0">
                                     <span class="material-symbols-outlined text-2xl">picture_as_pdf</span>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-on-surface text-body-sm leading-tight">CV_Maria_Espinoza_2026.pdf</h4>
-                                    <p class="text-[11px] text-on-surface-variant mt-0.5">Subido el 24 Jun 2026 • 1.2 MB • <span class="text-green-600 font-semibold">Principal</span></p>
+                                    <h4 class="font-semibold text-on-surface text-body-sm leading-tight">{{ $cv->filename }}</h4>
+                                    <p class="text-[11px] text-on-surface-variant mt-0.5">Subido el {{ $cv->uploaded_at }} • Versión {{ $cv->version }} @if($loop->first) • <span class="text-green-600 font-semibold">Principal</span> @endif</p>
                                 </div>
                             </div>
                             <div class="flex gap-2">
-                                <button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+                                <a href="{{ route('student.cv.download', $cv->id) }}" class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors flex items-center justify-center">
                                     <span class="material-symbols-outlined text-xl">download</span>
-                                </button>
-                                <button class="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors">
+                                </a>
+                                <button onclick="deleteCv({{ $cv->id }})" class="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors flex items-center justify-center">
                                     <span class="material-symbols-outlined text-xl">delete</span>
                                 </button>
                             </div>
                         </div>
+                        @empty
+                        <p id="no-cvs-placeholder" class="text-center py-8 text-on-surface-variant">No ha subido ningún currículum todavía.</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -491,6 +498,67 @@
         // Initialize to show 'jobs' panel first as requested
         switchTab('jobs');
     });
+
+    function showToast(message) {
+        alert(message);
+    }
+
+    function uploadCv(input) {
+        if (!input.files || input.files.length === 0) return;
+        
+        const formData = new FormData();
+        formData.append('cv', input.files[0]);
+        formData.append('_token', '{{ csrf_token() }}');
+        
+        showToast('Subiendo currículum...');
+        
+        fetch('{{ route("student.cv.upload") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast('¡Currículum subido con éxito!');
+                location.reload();
+            } else {
+                showToast(data.message || 'Error al subir currículum.');
+            }
+        })
+        .catch(err => {
+            showToast('Error en la comunicación con el servidor.');
+        });
+    }
+    
+    function deleteCv(id) {
+        if (!confirm('¿Está seguro de que desea eliminar este currículum?')) return;
+        
+        fetch('/student/cv/delete/' + id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Currículum eliminado.');
+                const el = document.getElementById('cv-item-' + id);
+                if (el) el.remove();
+                location.reload();
+            } else {
+                showToast(data.message || 'Error al eliminar.');
+            }
+        })
+        .catch(err => {
+            showToast('Error en el servidor.');
+        });
+    }
 </script>
 </body>
 </html>
