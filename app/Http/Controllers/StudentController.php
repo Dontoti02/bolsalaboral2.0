@@ -62,7 +62,11 @@ class StudentController extends Controller
             $cvsCount = 0;
         }
 
-        $config = \Illuminate\Support\Facades\DB::table('system_configuration')->pluck('value', 'key')->all();
+        try {
+            $config = \Illuminate\Support\Facades\DB::table('system_configuration')->pluck('value', 'key')->all();
+        } catch (\Exception $e) {
+            $config = [];
+        }
 
         return view('student.dashboard', compact(
             'totalApplications',

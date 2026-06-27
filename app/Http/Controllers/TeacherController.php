@@ -71,7 +71,11 @@ class TeacherController extends Controller
             $closedOffers = collect();
         }
 
-        $config = \Illuminate\Support\Facades\DB::table('system_configuration')->pluck('value', 'key')->all();
+        try {
+            $config = \Illuminate\Support\Facades\DB::table('system_configuration')->pluck('value', 'key')->all();
+        } catch (\Exception $e) {
+            $config = [];
+        }
 
         return view('teacher.dashboard', compact('activeOffers', 'closedOffers', 'config'));
     }

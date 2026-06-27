@@ -99,7 +99,11 @@ class CompanyDashboardController extends Controller
             $recentApplicants = collect();
         }
 
-        $config = DB::table('system_configuration')->pluck('value', 'key')->all();
+        try {
+            $config = DB::table('system_configuration')->pluck('value', 'key')->all();
+        } catch (\Exception $e) {
+            $config = [];
+        }
 
         return view('company.dashboard', compact(
             'company',
