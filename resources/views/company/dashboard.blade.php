@@ -107,7 +107,7 @@
                     <h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Resumen de Empresa</h1>
                     <p class="font-body-md text-body-md text-on-surface-variant">Monitorea el rendimiento de tus ofertas y postulantes.</p>
                 </div>
-                <button onclick="openOfferModal()" class="bg-primary text-on-primary rounded-lg px-lg py-3 font-label-md text-label-md flex items-center justify-center gap-sm shadow-sm hover:opacity-90 transition-opacity">
+                <button onclick="switchTab('offers'); showCreateOfferForm()" class="bg-primary text-on-primary rounded-lg px-lg py-3 font-label-md text-label-md flex items-center justify-center gap-sm shadow-sm hover:opacity-90 transition-opacity">
                     <span class="material-symbols-outlined text-[20px]">add</span>
                     Crear Nueva Oferta
                 </button>
@@ -262,62 +262,244 @@
         </div>
         
         <!-- ================= PANEL 2: GESTIONAR OFERTAS ================= -->
-        <div id="panel-offers" class="tab-panel space-y-xl hidden">
-            <!-- Header with Action -->
-            <div class="flex justify-between items-center">
-                <h2 class="text-headline-sm font-headline-sm text-on-surface">Gestionar Ofertas de Empleo</h2>
-                <button onclick="openOfferModal()" class="bg-primary text-on-primary rounded-lg px-md py-2.5 font-label-md text-label-md flex items-center gap-sm shadow-sm hover:opacity-90 transition-opacity">
-                    <span class="material-symbols-outlined text-[20px]">add</span>
-                    Publicar Oferta
-                </button>
-            </div>
-            
-            <!-- Active Offers Grid -->
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="border-b border-outline-variant bg-surface-container-low">
-                                <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant font-semibold">Título de Oferta</th>
-                                <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant font-semibold">Ubicación</th>
-                                <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant font-semibold">Fecha de Publicación</th>
-                                <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant font-semibold text-center">Postulantes</th>
-                                <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant font-semibold text-right">Estado</th>
-                                <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant font-semibold text-right">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($offers as $o)
-                            @php
-                                $stateName = $o->state->name ?? 'Desconocido';
-                                $stateKey = $o->state->key ?? '';
-                                $stateClass = 'bg-surface-container text-on-surface-variant';
-                                if ($stateKey === 'active') $stateClass = 'bg-secondary-container text-on-secondary-container';
-                                elseif ($stateKey === 'draft') $stateClass = 'bg-tertiary-fixed text-on-tertiary-fixed-variant';
-                                elseif ($stateKey === 'finished') $stateClass = 'bg-surface-container text-on-surface-variant';
-                            @endphp
-                            <tr class="border-b border-surface-container-high hover:bg-surface-container-lowest transition-colors">
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface font-semibold">{{ $o->title }}</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">{{ $o->location->name ?? 'No especificada' }}</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">{{ $o->publication_date ? \Carbon\Carbon::parse($o->publication_date)->format('d M Y') : '-' }}</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface text-center">{{ $o->applicants_count }}</td>
-                                <td class="px-lg py-md text-right">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm {{ $stateClass }} font-semibold">{{ $stateName }}</span>
-                                </td>
-                                <td class="px-lg py-md text-right">
-                                    <button onclick="toggleOfferState({{ $o->id }})" class="text-primary hover:underline font-label-sm text-label-sm font-semibold">
-                                        {{ $stateKey === 'active' ? 'Finalizar' : 'Activar' }}
-                                    </button>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="6" class="px-lg py-md text-center text-on-surface-variant">No ha publicado ofertas aún.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+        <div id="panel-offers" class="tab-panel space-y-lg hidden">
+
+            <!-- Offers List View -->
+            <div id="company-offers-list-view" class="space-y-lg">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-headline-lg font-headline-lg text-primary mb-1">Mis Ofertas Laborales</h1>
+                        <p class="text-body-md text-on-surface-variant">Gestiona y publica las convocatorias de tu empresa.</p>
+                    </div>
                 </div>
+
+                <!-- Search and Action Bar -->
+                <div class="flex flex-col sm:flex-row gap-md items-center justify-between">
+                    <div class="flex-1 w-full max-w-xl relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[20px]">search</span>
+                        <input id="company-search-offers-input" oninput="loadCompanyOffers()"
+                            class="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
+                            placeholder="Buscar convocatorias..." type="text">
+                    </div>
+                    <div class="flex items-center gap-md w-full sm:w-auto">
+                        <select id="company-filter-sort" onchange="loadCompanyOffers()"
+                            class="flex-1 sm:flex-initial px-4 py-2.5 bg-surface border border-outline-variant rounded-xl outline-none text-body-sm font-medium focus:border-primary transition-all">
+                            <option value="recent">Recientes</option>
+                            <option value="title_asc">Título A-Z</option>
+                            <option value="title_desc">Título Z-A</option>
+                            <option value="salary_desc">Mayor Salario</option>
+                            <option value="salary_asc">Menor Salario</option>
+                        </select>
+                        <button onclick="showCreateOfferForm()"
+                            class="flex-1 sm:flex-initial px-6 py-2.5 bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:opacity-95 shadow-sm transition-all font-semibold flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]">add</span>
+                            Crear Oferta
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Offers Table -->
+                <div class="bg-surface rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-surface-container-low border-b border-outline-variant text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/80">
+                                    <th class="px-4 py-3.5 w-12">Acción</th>
+                                    <th class="px-4 py-3.5 w-24">Estado</th>
+                                    <th class="px-4 py-3.5">Título</th>
+                                    <th class="px-4 py-3.5">Salario</th>
+                                    <th class="px-4 py-3.5">Categoría</th>
+                                    <th class="px-4 py-3.5">Jornada</th>
+                                    <th class="px-4 py-3.5">Modalidad</th>
+                                    <th class="px-4 py-3.5">Contrato</th>
+                                </tr>
+                            </thead>
+                            <tbody id="company-offers-table-body"
+                                class="divide-y divide-outline-variant/60 font-body-sm text-body-sm text-on-surface">
+                                <tr>
+                                    <td colspan="8" class="text-center py-xl text-on-surface-variant">Cargando ofertas...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offers Create/Edit Form View -->
+            <div id="company-offers-form-view"
+                class="bg-surface rounded-2xl border border-outline-variant shadow-sm overflow-hidden p-lg space-y-lg hidden">
+                <div class="flex items-center gap-sm">
+                    <button onclick="hideCreateOfferForm()"
+                        class="p-2 border border-outline-variant hover:bg-surface-container-high rounded-xl text-on-surface-variant flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                    </button>
+                    <h2 id="company-form-offer-title" class="text-headline-md font-headline-md text-primary">Crear Oferta Laboral</h2>
+                </div>
+
+                <form id="company-offer-form" onsubmit="handleCompanyOfferSubmit(event)" class="space-y-lg">
+                    <input type="hidden" id="company-form-offer-id" value="">
+
+                    <!-- Row 1: Title and Date -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-lg">
+                        <div class="md:col-span-3 space-y-xs">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant block" for="co-offer-title">Título</label>
+                            <input class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
+                                id="co-offer-title" placeholder="Aa" type="text" required />
+                        </div>
+                        <div class="space-y-xs">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant block" for="co-offer-pub-date">Fecha de publicación</label>
+                            <input class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
+                                id="co-offer-pub-date" type="date" required />
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Description -->
+                    <div class="space-y-xs">
+                        <label class="font-label-sm text-label-sm text-on-surface-variant block">Descripción</label>
+                        <div class="border border-outline-variant rounded-xl bg-background overflow-hidden flex flex-col">
+                            <div class="bg-surface-container-low px-md py-sm border-b border-outline-variant/60 flex flex-wrap gap-md items-center text-on-surface-variant/80">
+                                <span class="font-semibold text-xs border-r border-outline-variant/80 pr-md">Normal</span>
+                                <button type="button" onclick="formatTextarea('co-offer-description','bold')" class="font-bold hover:text-primary">B</button>
+                                <button type="button" onclick="formatTextarea('co-offer-description','italic')" class="italic hover:text-primary">I</button>
+                                <span class="text-outline-variant">|</span>
+                                <button type="button" onclick="formatTextarea('co-offer-description','bullet')" class="material-symbols-outlined text-[18px] hover:text-primary">format_list_bulleted</button>
+                                <button type="button" onclick="formatTextarea('co-offer-description','numeric')" class="material-symbols-outlined text-[18px] hover:text-primary">format_list_numbered</button>
+                            </div>
+                            <textarea id="co-offer-description" rows="5"
+                                class="w-full px-4 py-2.5 bg-transparent border-none outline-none font-body-sm text-body-sm text-on-surface focus:ring-0"
+                                placeholder="Descripción..." required></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Requirements & Benefits -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                        <div class="space-y-xs">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant block">Requisitos</label>
+                            <div class="border border-outline-variant rounded-xl bg-background overflow-hidden flex flex-col">
+                                <div class="bg-surface-container-low px-md py-sm border-b border-outline-variant/60 flex flex-wrap gap-md items-center text-on-surface-variant/80">
+                                    <span class="font-semibold text-xs border-r border-outline-variant/80 pr-md">Normal</span>
+                                    <button type="button" onclick="formatTextarea('co-offer-requirements','bold')" class="font-bold hover:text-primary">B</button>
+                                    <button type="button" onclick="formatTextarea('co-offer-requirements','italic')" class="italic hover:text-primary">I</button>
+                                    <span class="text-outline-variant">|</span>
+                                    <button type="button" onclick="formatTextarea('co-offer-requirements','bullet')" class="material-symbols-outlined text-[18px] hover:text-primary">format_list_bulleted</button>
+                                    <button type="button" onclick="formatTextarea('co-offer-requirements','numeric')" class="material-symbols-outlined text-[18px] hover:text-primary">format_list_numbered</button>
+                                </div>
+                                <textarea id="co-offer-requirements" rows="4"
+                                    class="w-full px-4 py-2.5 bg-transparent border-none outline-none font-body-sm text-body-sm text-on-surface focus:ring-0"
+                                    placeholder="Requisitos..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="space-y-xs">
+                            <label class="font-label-sm text-label-sm text-on-surface-variant block">Beneficios</label>
+                            <div class="border border-outline-variant rounded-xl bg-background overflow-hidden flex flex-col">
+                                <div class="bg-surface-container-low px-md py-sm border-b border-outline-variant/60 flex flex-wrap gap-md items-center text-on-surface-variant/80">
+                                    <span class="font-semibold text-xs border-r border-outline-variant/80 pr-md">Normal</span>
+                                    <button type="button" onclick="formatTextarea('co-offer-benefits','bold')" class="font-bold hover:text-primary">B</button>
+                                    <button type="button" onclick="formatTextarea('co-offer-benefits','italic')" class="italic hover:text-primary">I</button>
+                                    <span class="text-outline-variant">|</span>
+                                    <button type="button" onclick="formatTextarea('co-offer-benefits','bullet')" class="material-symbols-outlined text-[18px] hover:text-primary">format_list_bulleted</button>
+                                    <button type="button" onclick="formatTextarea('co-offer-benefits','numeric')" class="material-symbols-outlined text-[18px] hover:text-primary">format_list_numbered</button>
+                                </div>
+                                <textarea id="co-offer-benefits" rows="4"
+                                    class="w-full px-4 py-2.5 bg-transparent border-none outline-none font-body-sm text-body-sm text-on-surface focus:ring-0"
+                                    placeholder="Beneficios..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Selects Grid (3 Columns) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+                        <!-- Column 1 -->
+                        <div class="space-y-md">
+                            <div class="space-y-xs">
+                                <label class="font-label-sm text-label-sm text-on-surface-variant block" for="co-offer-contract-type">Tipo de contrato</label>
+                                <select id="co-offer-contract-type"
+                                    class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm" required>
+                                    <option value="">Seleccionar...</option>
+                                </select>
+                            </div>
+                            <div class="space-y-xs">
+                                <label class="font-label-sm text-label-sm text-on-surface-variant block" for="co-offer-location">Modalidad de trabajo</label>
+                                <select id="co-offer-location"
+                                    class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm" required>
+                                    <option value="">Seleccionar...</option>
+                                </select>
+                            </div>
+                            <div class="space-y-xs">
+                                <label class="font-label-sm text-label-sm text-on-surface-variant block" for="co-offer-address">Dirección</label>
+                                <div class="relative">
+                                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">pin_drop</span>
+                                    <input class="w-full pl-10 pr-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
+                                        id="co-offer-address" placeholder="Ej. Av. De la Cultura 123" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Column 2 -->
+                        <div class="space-y-md">
+                            <div class="space-y-xs">
+                                <label class="font-label-sm text-label-sm text-on-surface-variant block" for="co-offer-work-schedule">Jornada laboral</label>
+                                <select id="co-offer-work-schedule"
+                                    class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm" required>
+                                    <option value="">Seleccionar...</option>
+                                </select>
+                            </div>
+                            <div class="space-y-xs">
+                                <label class="font-label-sm text-label-sm text-on-surface-variant block" for="co-offer-department">Departamento</label>
+                                <select id="co-offer-department" onchange="handleCompanyDepartmentChange()"
+                                    class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm" required>
+                                    <option value="">Seleccionar...</option>
+                                </select>
+                            </div>
+                            <div class="space-y-xs">
+                                <label class="font-label-sm text-label-sm text-on-surface-variant block" for="co-offer-category">Categoría</label>
+                                <select id="co-offer-category"
+                                    class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm" required>
+                                    <option value="">Seleccionar...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Column 3 -->
+                        <div class="space-y-md">
+                            <div class="grid grid-cols-2 gap-sm">
+                                <div class="space-y-xs">
+                                    <label class="font-label-sm text-label-sm text-on-surface-variant block" for="co-offer-salary">Salario</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">payments</span>
+                                        <input class="w-full pl-10 pr-3 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm"
+                                            id="co-offer-salary" type="number" min="0" value="0" required />
+                                    </div>
+                                </div>
+                                <div class="space-y-xs">
+                                    <label class="font-label-sm text-label-sm text-on-surface-variant block" for="co-offer-currency">Moneda</label>
+                                    <select id="co-offer-currency"
+                                        class="w-full px-3 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm" required>
+                                        <option value="SOLES">SOLES</option>
+                                        <option value="DOLARES">DOLARES</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="space-y-xs">
+                                <label class="font-label-sm text-label-sm text-on-surface-variant block" for="co-offer-province">Provincia</label>
+                                <select id="co-offer-province"
+                                    class="w-full px-4 py-2.5 bg-background border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-sm text-body-sm" required>
+                                    <option value="">Seleccionar departamento primero...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Actions -->
+                    <div class="flex justify-end gap-md pt-lg border-t border-outline-variant">
+                        <button type="button" onclick="hideCreateOfferForm()"
+                            class="px-6 py-2.5 border border-primary text-primary font-label-md text-label-md rounded-xl hover:bg-primary-fixed transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" id="co-btn-save-offer"
+                            class="px-6 py-2.5 bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:opacity-95 shadow-sm transition-all font-semibold">
+                            Crear Oferta Laboral
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -610,209 +792,318 @@
             btn.addEventListener('click', function() {
                 const tabId = this.getAttribute('data-tab');
                 switchTab(tabId);
+                if (tabId === 'offers') loadCompanyOffers();
             });
         });
-        
+
         // Mobile Sidebar Toggle
         const openBtn = document.getElementById('open-sidebar-btn');
         const closeBtn = document.getElementById('close-sidebar-btn');
         const sidebar = document.getElementById('sidebar');
         const backdrop = document.getElementById('sidebar-backdrop');
-        
+
         function toggleSidebar() {
             sidebar.classList.toggle('-translate-x-full');
             backdrop.classList.toggle('hidden');
         }
-        
+
         if (openBtn) openBtn.addEventListener('click', toggleSidebar);
         if (closeBtn) closeBtn.addEventListener('click', toggleSidebar);
         if (backdrop) backdrop.addEventListener('click', toggleSidebar);
-        
+
         // Initialize to show 'dashboard' panel first
         switchTab('dashboard');
     });
 
-    function openOfferModal() {
-        document.getElementById('offer-modal').classList.remove('hidden');
-        document.getElementById('offer-modal').classList.add('flex');
+    /* ============================================================
+       COMPANY OFFER MANAGEMENT – mirrors admin panel
+    ============================================================ */
+    let companyOfferMeta = null;
+    const CSRF = '{{ csrf_token() }}';
+
+    async function loadCompanyOfferMeta() {
+        if (companyOfferMeta) return companyOfferMeta;
+        const res = await fetch('/company/offers/meta', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        const data = await res.json();
+        if (data.success) {
+            companyOfferMeta = data;
+            populateCompanySelect('co-offer-contract-type', data.contract_types);
+            populateCompanySelect('co-offer-location', data.locations);
+            populateCompanySelect('co-offer-work-schedule', data.work_schedules);
+            populateCompanySelect('co-offer-category', data.categories);
+            populateCompanyDepartments();
+        }
+        return companyOfferMeta;
     }
-    
-    function closeOfferModal() {
-        document.getElementById('offer-modal').classList.add('hidden');
-        document.getElementById('offer-modal').classList.remove('flex');
-    }
-    
-    function submitOffer() {
-        const form = document.getElementById('offer-form');
-        const formData = new FormData(form);
-        
-        const payload = {};
-        formData.forEach((val, key) => payload[key] = val);
-        
-        fetch('{{ route("company.offers.store") }}', {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                alert('¡Oferta laboral publicada exitosamente!');
-                closeOfferModal();
-                location.reload();
-            } else {
-                alert(data.message || 'Error al guardar la oferta.');
-            }
-        })
-        .catch(err => {
-            alert('Error en el servidor.');
+
+    function populateCompanySelect(id, items, selectedId = null) {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        const cur = selectedId || sel.value;
+        sel.innerHTML = '<option value="">Seleccionar...</option>';
+        (items || []).forEach(i => {
+            const opt = document.createElement('option');
+            opt.value = i.id;
+            opt.textContent = i.name;
+            if (String(i.id) === String(cur)) opt.selected = true;
+            sel.appendChild(opt);
         });
     }
-    
-    function toggleOfferState(id) {
+
+    const PERU_DEPTS = {
+        'Amazonas':['Chachapoyas','Bagua','Bongará','Condorcanqui','Luya','Rodríguez de Mendoza','Utcubamba'],
+        'Áncash':['Huaraz','Aija','Antonio Raymondi','Asunción','Bolognesi','Carhuaz','Carlos Fermín Fitzcarrald','Casma','Corongo','Huari','Huarmey','Huaylas','Mariscal Luzuriaga','Ocros','Pallasca','Pomabamba','Recuay','Santa','Sihuas','Yungay'],
+        'Apurímac':['Abancay','Andahuaylas','Antabamba','Aymaraes','Cotabambas','Chincheros','Grau'],
+        'Arequipa':['Arequipa','Camaná','Caravelí','Castilla','Caylloma','Condesuyos','Islay','La Unión'],
+        'Ayacucho':['Huamanga','Cangallo','Huanca Sancos','Huanta','La Mar','Lucanas','Parinacochas','Páucar del Sara Sara','Sucre','Víctor Fajardo','Vilcas Huamán'],
+        'Cajamarca':['Cajamarca','Cajabamba','Celendín','Chota','Contumazá','Cutervo','Hualgayoc','Jaén','San Ignacio','San Marcos','San Miguel','San Pablo','Santa Cruz'],
+        'Callao':['Callao'],
+        'Cusco':['Cusco','Acomayo','Anta','Calca','Canas','Canchis','Chumbivilcas','Espinar','La Convención','Paruro','Paucartambo','Quispicanchis','Urubamba'],
+        'Huancavelica':['Huancavelica','Acobamba','Angaraes','Castrovirreyna','Churcampa','Huaytará','Tayacaja'],
+        'Huánuco':['Huánuco','Ambo','Dos de Mayo','Huacaybamba','Huamalíes','Leoncio Prado','Marañón','Pachitea','Puerto Inca','Lauricocha','Yarowilca'],
+        'Ica':['Ica','Chincha','Nasca','Palpa','Pisco'],
+        'Junín':['Huancayo','Chanchamayo','Chupaca','Concepción','Jauja','Junín','Satipo','Tarma','Yauli'],
+        'La Libertad':['Trujillo','Ascope','Bolívar','Chepén','Julcán','Otuzco','Pacasmayo','Pataz','Sánchez Carrión','Santiago de Chuco','Gran Chimú','Virú'],
+        'Lambayeque':['Chiclayo','Ferreñafe','Lambayeque'],
+        'Lima':['Lima','Barranca','Cajatambo','Canta','Cañete','Huaral','Huarochirí','Huaura','Oyón','Yauyos'],
+        'Loreto':['Maynas','Alto Amazonas','Datem del Marañón','Loreto','Mariscal Ramón Castilla','Putumayo','Requena','Ucayali'],
+        'Madre de Dios':['Tambopata','Manu','Tahuamanu'],
+        'Moquegua':['Mariscal Nieto','General Sánchez Cerro','Ilo'],
+        'Pasco':['Pasco','Daniel Alcides Carrión','Oxapampa'],
+        'Piura':['Piura','Ayabaca','Huancabamba','Morropón','Paita','Sullana','Talara','Sechura'],
+        'Puno':['Puno','Azángaro','Carabaya','Chucuito','El Collao','Huancané','Lampa','Melgar','Moho','San Antonio de Putina','San Román','Sandia','Yunguyo'],
+        'San Martín':['Moyobamba','Bellavista','El Dorado','Huallaga','Lamas','Mariscal Cáceres','Picota','Rioja','San Martín','Tocache'],
+        'Tacna':['Tacna','Candarave','Jorge Basadre','Tarata'],
+        'Tumbes':['Tumbes','Contralmirante Villar','Zarumilla'],
+        'Ucayali':['Coronel Portillo','Atalaya','Padre Abad','Purús']
+    };
+
+    function populateCompanyDepartments() {
+        const sel = document.getElementById('co-offer-department');
+        if (!sel) return;
+        const cur = sel.value;
+        sel.innerHTML = '<option value="">Seleccionar...</option>';
+        Object.keys(PERU_DEPTS).forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d;
+            if (d === cur) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    }
+
+    function handleCompanyDepartmentChange() {
+        const dept = document.getElementById('co-offer-department').value;
+        const provSel = document.getElementById('co-offer-province');
+        provSel.innerHTML = '<option value="">Seleccionar provincia...</option>';
+        (PERU_DEPTS[dept] || []).forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p;
+            opt.textContent = p;
+            provSel.appendChild(opt);
+        });
+    }
+
+    function loadCompanyOffers() {
+        const tbody = document.getElementById('company-offers-table-body');
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-xl text-on-surface-variant">Cargando ofertas...</td></tr>';
+        const search  = (document.getElementById('company-search-offers-input')?.value || '').trim();
+        const sortBy  = document.getElementById('company-filter-sort')?.value || 'recent';
+        const params  = new URLSearchParams({ search, sort_by: sortBy });
+
+        fetch(`/company/offers?${params}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) { tbody.innerHTML = '<tr><td colspan="8" class="text-center py-xl text-red-600">Error al cargar ofertas.</td></tr>'; return; }
+                const offers = data.offers;
+                if (!offers.length) { tbody.innerHTML = '<tr><td colspan="8" class="text-center py-xl text-on-surface-variant">No hay ofertas publicadas aún.</td></tr>'; return; }
+
+                const stateLabels = { 1:'Borrador', 2:'Activa', 3:'Finalizada', 4:'Pausada', 5:'Archivada' };
+                const stateColors = { 1:'bg-surface-container text-on-surface-variant', 2:'bg-secondary-container text-on-secondary-container', 3:'bg-surface-container text-on-surface-variant', 4:'bg-tertiary-fixed text-on-tertiary-fixed-variant', 5:'bg-surface-container text-on-surface-variant' };
+
+                tbody.innerHTML = offers.map(o => {
+                    const stateId   = o.state_id || 1;
+                    const stateLbl  = o.state?.name || stateLabels[stateId] || 'Borrador';
+                    const stateClr  = stateColors[stateId] || stateColors[1];
+                    const toggleLbl = stateId === 2 ? 'Finalizar' : 'Activar';
+                    return `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-1">
+                                <button onclick="editCompanyOffer(${o.id})" title="Editar" class="p-1.5 rounded-lg hover:bg-surface-container-high text-primary"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                <button onclick="deleteCompanyOffer(${o.id})" title="Eliminar" class="p-1.5 rounded-lg hover:bg-error-container text-error"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                                <button onclick="toggleCompanyOfferState(${o.id})" title="${toggleLbl}" class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">${stateId === 2 ? 'pause' : 'play_arrow'}</span></button>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold ${stateClr}">${stateLbl}</span></td>
+                        <td class="px-4 py-3 font-semibold">${o.title}</td>
+                        <td class="px-4 py-3">${o.salary_currency === 'DOLARES' ? '$' : 'S/'} ${Number(o.salary).toLocaleString()}</td>
+                        <td class="px-4 py-3">${o.category?.name || '-'}</td>
+                        <td class="px-4 py-3">${o.work_schedule?.name || '-'}</td>
+                        <td class="px-4 py-3">${o.location?.name || '-'}</td>
+                        <td class="px-4 py-3">${o.contract_type?.name || '-'}</td>
+                    </tr>`;
+                }).join('');
+            })
+            .catch(() => { tbody.innerHTML = '<tr><td colspan="8" class="text-center py-xl text-red-600">Error de red al cargar ofertas.</td></tr>'; });
+    }
+
+    function showCreateOfferForm() {
+        document.getElementById('company-form-offer-id').value = '';
+        document.getElementById('company-offer-form').reset();
+        document.getElementById('co-offer-pub-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('company-form-offer-title').textContent = 'Crear Oferta Laboral';
+        document.getElementById('co-btn-save-offer').textContent = 'Crear Oferta Laboral';
+        document.getElementById('company-offers-list-view').classList.add('hidden');
+        document.getElementById('company-offers-form-view').classList.remove('hidden');
+        loadCompanyOfferMeta();
+    }
+
+    function hideCreateOfferForm() {
+        document.getElementById('company-offers-form-view').classList.add('hidden');
+        document.getElementById('company-offers-list-view').classList.remove('hidden');
+        loadCompanyOffers();
+    }
+
+    function handleCompanyOfferSubmit(event) {
+        event.preventDefault();
+        const id  = document.getElementById('company-form-offer-id').value;
+        const btn = document.getElementById('co-btn-save-offer');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[16px] leading-none align-middle mr-1">autorenew</span> Guardando...';
+
+        const payload = {
+            title:            document.getElementById('co-offer-title').value,
+            description:      document.getElementById('co-offer-description').value,
+            requirements:     document.getElementById('co-offer-requirements').value,
+            benefits:         document.getElementById('co-offer-benefits').value,
+            publication_date: document.getElementById('co-offer-pub-date').value,
+            salary:           document.getElementById('co-offer-salary').value,
+            salary_currency:  document.getElementById('co-offer-currency').value,
+            address:          document.getElementById('co-offer-address').value,
+            department:       document.getElementById('co-offer-department').value,
+            province:         document.getElementById('co-offer-province').value,
+            location_id:      document.getElementById('co-offer-location').value,
+            category_id:      document.getElementById('co-offer-category').value,
+            work_schedule_id: document.getElementById('co-offer-work-schedule').value,
+            contract_type_id: document.getElementById('co-offer-contract-type').value,
+        };
+
+        const url    = id ? `/company/offers/${id}` : '/company/offers';
+        const method = id ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method,
+            body:    JSON.stringify(payload),
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.textContent = id ? 'Guardar Cambios' : 'Crear Oferta Laboral';
+            if (data.success) {
+                showToast(data.message);
+                hideCreateOfferForm();
+            } else {
+                showToast(data.message || 'Error al guardar la oferta.', 'error');
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.textContent = id ? 'Guardar Cambios' : 'Crear Oferta Laboral';
+            showToast('Error de red al intentar guardar la oferta.', 'error');
+        });
+    }
+
+    function editCompanyOffer(id) {
+        fetch(`/company/offers/${id}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(r => r.json())
+            .then(async data => {
+                if (!data.success) { showToast('No se pudieron cargar los datos de la oferta.', 'error'); return; }
+                await loadCompanyOfferMeta();
+                const o = data.offer;
+                document.getElementById('company-form-offer-id').value = o.id;
+                document.getElementById('co-offer-title').value         = o.title || '';
+                document.getElementById('co-offer-description').value   = o.description || '';
+                document.getElementById('co-offer-requirements').value  = o.requirements || '';
+                document.getElementById('co-offer-benefits').value      = o.benefits || '';
+                document.getElementById('co-offer-pub-date').value      = o.publication_date || '';
+                document.getElementById('co-offer-salary').value        = o.salary || 0;
+                document.getElementById('co-offer-currency').value      = o.salary_currency || 'SOLES';
+                document.getElementById('co-offer-address').value       = o.address || '';
+                populateCompanySelect('co-offer-contract-type', companyOfferMeta.contract_types, o.contract_type_id);
+                populateCompanySelect('co-offer-location',      companyOfferMeta.locations, o.location_id);
+                populateCompanySelect('co-offer-work-schedule', companyOfferMeta.work_schedules, o.work_schedule_id);
+                populateCompanySelect('co-offer-category',      companyOfferMeta.categories, o.category_id);
+                populateCompanyDepartments();
+                document.getElementById('co-offer-department').value = o.department || '';
+                handleCompanyDepartmentChange();
+                document.getElementById('co-offer-province').value = o.province || '';
+                document.getElementById('company-form-offer-title').textContent = 'Editar Oferta Laboral';
+                document.getElementById('co-btn-save-offer').textContent = 'Guardar Cambios';
+                document.getElementById('company-offers-list-view').classList.add('hidden');
+                document.getElementById('company-offers-form-view').classList.remove('hidden');
+            })
+            .catch(() => showToast('Error de red al cargar detalles de oferta.', 'error'));
+    }
+
+    function toggleCompanyOfferState(id) {
         if (!confirm('¿Está seguro de cambiar el estado de esta oferta?')) return;
-        
-        fetch('/company/offers/' + id + '/toggle-state', {
+        fetch(`/company/offers/${id}/toggle-state`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(res => res.json())
+        .then(r => r.json())
         .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert(data.message || 'Error al cambiar estado.');
-            }
+            if (data.success) { showToast('Estado de la oferta actualizado.'); loadCompanyOffers(); }
+            else showToast(data.message || 'Error al cambiar estado.', 'error');
         })
-        .catch(err => {
-            alert('Error.');
-        });
+        .catch(() => showToast('Error de red.', 'error'));
     }
-    
+
+    function deleteCompanyOffer(id) {
+        if (!confirm('¿Estás seguro de que deseas eliminar esta oferta laboral?')) return;
+        fetch(`/company/offers/${id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) { showToast('Oferta laboral eliminada.'); loadCompanyOffers(); }
+            else showToast(data.message || 'Error al eliminar oferta.', 'error');
+        })
+        .catch(() => showToast('Error de red al eliminar oferta.', 'error'));
+    }
+
     function updateStatus(appId, status) {
         const feedback = prompt('Ingrese un comentario de retroalimentación para el candidato (Opcional):');
         if (feedback === null) return;
-        
         fetch('/company/applications/' + appId + '/status', {
             method: 'POST',
-            body: JSON.stringify({ status: status, feedback: feedback }),
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+            body: JSON.stringify({ status, feedback }),
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(res => res.json())
+        .then(r => r.json())
         .then(data => {
-            if (data.success) {
-                alert('¡Postulante actualizado!');
-                location.reload();
-            } else {
-                alert(data.message || 'Error.');
-            }
+            if (data.success) { showToast('¡Postulante actualizado!'); }
+            else showToast(data.message || 'Error.', 'error');
         })
-        .catch(err => {
-            alert('Error.');
-        });
+        .catch(() => showToast('Error de red.', 'error'));
+    }
+
+    function formatTextarea(id, format) {
+        const ta = document.getElementById(id);
+        if (!ta) return;
+        const start = ta.selectionStart, end = ta.selectionEnd, sel = ta.value.substring(start, end);
+        let insert = sel;
+        if (format === 'bold')    insert = `**${sel}**`;
+        if (format === 'italic')  insert = `_${sel}_`;
+        if (format === 'bullet')  insert = `\n• ${sel}`;
+        if (format === 'numeric') insert = `\n1. ${sel}`;
+        ta.setRangeText(insert, start, end, 'end');
+        ta.focus();
     }
 </script>
 
-<!-- Create Offer Modal -->
-<div id="offer-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/50 p-4">
-    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant p-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-md">
-        <div class="flex justify-between items-center">
-            <h3 class="font-headline-md text-headline-md text-on-surface">Publicar Nueva Oferta de Empleo</h3>
-            <button onclick="closeOfferModal()" class="text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        <form id="offer-form" class="grid grid-cols-1 md:grid-cols-2 gap-md pt-2">
-            @csrf
-            <div class="col-span-2">
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Título del Puesto *</label>
-                <input type="text" name="title" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
-            </div>
-            <div class="col-span-2">
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Descripción del Puesto *</label>
-                <textarea name="description" rows="3" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"></textarea>
-            </div>
-            <div class="col-span-2">
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Requerimientos *</label>
-                <textarea name="requirements" rows="2" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Experiencia, habilidades, etc."></textarea>
-            </div>
-            <div class="col-span-2">
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Beneficios (Opcional)</label>
-                <textarea name="benefits" rows="2" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Seguro, bonos, etc."></textarea>
-            </div>
-            <div>
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Salario Mensual *</label>
-                <input type="number" step="0.01" name="salary" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
-            </div>
-            <div>
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Moneda *</label>
-                <select name="salary_currency" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
-                    <option value="SOLES">Soles (S/)</option>
-                    <option value="DOLARES">Dólares ($)</option>
-                </select>
-            </div>
-            <div>
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Modalidad *</label>
-                <select name="location_id" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
-                    @foreach($locations as $loc)
-                    <option value="{{ $loc->id }}">{{ $loc->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Categoría *</label>
-                <select name="category_id" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
-                    @foreach($categories as $cat)
-                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Jornada Laboral *</label>
-                <select name="work_schedule_id" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
-                    @foreach($schedules as $sch)
-                    <option value="{{ $sch->id }}">{{ $sch->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Tipo de Contrato *</label>
-                <select name="contract_type_id" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
-                    @foreach($contracts as $con)
-                    <option value="{{ $con->id }}">{{ $con->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Departamento *</label>
-                <input type="text" name="department" value="Lima" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
-            </div>
-            <div>
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Provincia *</label>
-                <input type="text" name="province" value="Lima" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
-            </div>
-            <div class="col-span-2">
-                <label class="block font-semibold text-body-sm text-on-surface mb-1">Dirección de Trabajo *</label>
-                <input type="text" name="address" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
-            </div>
-        </form>
-        <div class="flex justify-end gap-md">
-            <button onclick="closeOfferModal()" class="px-5 py-2.5 border border-outline-variant text-on-surface-variant rounded-xl text-label-md font-label-md hover:bg-surface-container-high font-semibold transition-all">Cancelar</button>
-            <button onclick="submitOffer()" class="px-5 py-2.5 bg-primary text-on-primary rounded-xl text-label-md font-label-md hover:opacity-95 font-semibold transition-all">Guardar y Publicar</button>
-        </div>
-    </div>
-</div>
 </body>
 </html>

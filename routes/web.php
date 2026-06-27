@@ -63,8 +63,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/company/dashboard', [\App\Http\Controllers\CompanyDashboardController::class, 'showDashboard'])->name('company.dashboard');
     Route::post('/company/profile', [\App\Http\Controllers\CompanyDashboardController::class, 'updateProfile']);
-    // Company actions
+    // Company offer CRUD (scoped to authenticated company)
+    Route::get('/company/offers', [\App\Http\Controllers\CompanyDashboardController::class, 'listOffers'])->name('company.offers.index');
     Route::post('/company/offers', [\App\Http\Controllers\CompanyDashboardController::class, 'storeOffer'])->name('company.offers.store');
+    Route::get('/company/offers/meta', [\App\Http\Controllers\CompanyDashboardController::class, 'getOfferMeta'])->name('company.offers.meta');
+    Route::get('/company/offers/{id}', [\App\Http\Controllers\CompanyDashboardController::class, 'showOffer'])->name('company.offers.show');
+    Route::put('/company/offers/{id}', [\App\Http\Controllers\CompanyDashboardController::class, 'updateOffer'])->name('company.offers.update');
+    Route::delete('/company/offers/{id}', [\App\Http\Controllers\CompanyDashboardController::class, 'destroyOffer'])->name('company.offers.destroy');
     Route::post('/company/offers/{id}/toggle-state', [\App\Http\Controllers\CompanyDashboardController::class, 'toggleOfferState'])->name('company.offers.toggle-state');
     Route::post('/company/applications/{id}/status', [\App\Http\Controllers\CompanyDashboardController::class, 'updateApplicationStatus'])->name('company.applications.status');
 

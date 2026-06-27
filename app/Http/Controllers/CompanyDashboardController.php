@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class CompanyDashboardController extends Controller
 {
@@ -220,6 +221,332 @@ class CompanyDashboardController extends Controller
                 'success' => false,
                 'message' => 'Error al actualizar perfil: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* OFFER CRUD – scoped to the authenticated company                     */
+    /* ------------------------------------------------------------------ */
+
+    /**
+     * List offers for the authenticated company (AJAX).
+     */
+    public function listOffers(Request $request)
+    {
+        $user    = Auth::user();
+        $company = $user->company;
+
+        if (!$company) {
+            return response()->json(['success' => false, 'message' => 'Empresa no encontrada.'], 404);
+        }
+
+        try {
+            $query = JobOpportunityOffer::with(['company', 'location', 'state', 'category', 'workSchedule', 'contractType'])
+                ->where('company_id', $company->id);
+
+            if ($request->filled('search')) {
+                $s = $request->search;
+                $query->where(function ($q) use ($s) {
+                    $q->where('title', 'like', "%$s%")
+                      ->orWhere('description', 'like', "%$s%");
+                });
+            }
+
+            $sortBy = $request->input('sort_by', 'recent');
+            match ($sortBy) {
+                'title_asc'   => $query->orderBy('title', 'asc'),
+                'title_desc'  => $query->orderBy('title', 'desc'),
+                'salary_desc' => $query->orderBy('salary', 'desc'),
+                'salary_asc'  => $query->orderBy('salary', 'asc'),
+                default       => $query->orderBy('publication_date', 'desc'),
+            };
+
+            return response()->json(['success' => true, 'offers' => $query->get()]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get metadata (categories, locations, etc.) for the company offer form.
+     * Mirrors admin getMetadata but WITHOUT the companies list.
+     */
+    public function getOfferMeta()
+    {
+        try {
+            return response()->json([
+                'success'        => true,
+                'categories'     => DB::table('job_opportunity_offer_category')->get(),
+                'locations'      => DB::table('job_opportunity_location')->get(),
+                'work_schedules' => DB::table('job_opportunity_work_schedules')->get(),
+                'contract_types' => DB::table('job_opportunity_contract_types')->get(),
+                'states'         => DB::table('job_opportunity_offer_states')->get(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Store a new offer scoped to the authenticated company.
+     */
+    public function storeOffer(Request $request)
+    {
+        $user    = Auth::user();
+        $company = $user->company;
+
+        if (!$company) {
+            return response()->json(['success' => false, 'message' => 'Empresa no encontrada.'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'title'            => 'required|string|max:255',
+            'description'      => 'required|string',
+            'requirements'     => 'required|string',
+            'benefits'         => 'nullable|string',
+            'publication_date' => 'required|date',
+            'deadline'         => 'nullable|date',
+            'salary'           => 'required|numeric|min:0',
+            'salary_currency'  => 'required|string|in:SOLES,DOLARES',
+            'address'          => 'required|string|max:255',
+            'department'       => 'required|string|max:255',
+            'province'         => 'required|string|max:255',
+            'location_id'      => 'required|integer',
+            'category_id'      => 'required|integer',
+            'work_schedule_id' => 'required|integer',
+            'contract_type_id' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $slug      = Str::slug($request->title);
+            $slugCount = JobOpportunityOffer::where('slug', 'like', $slug . '%')->count();
+            if ($slugCount > 0) {
+                $slug .= '-' . time();
+            }
+
+            $offer = new JobOpportunityOffer($request->except('company_id'));
+            $offer->company_id = $company->id;   // always force company from auth
+            $offer->slug       = $slug;
+            $offer->country    = 'Perú';
+            $offer->state_id   = 2;              // active by default
+            $offer->save();
+
+            DB::table('job_opportunity_offer_state_detail')->insert([
+                'offer_id'   => $offer->id,
+                'state_id'   => $offer->state_id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => '¡Oferta laboral creada exitosamente!',
+                'offer'   => $offer->load(['company', 'location', 'state', 'category', 'workSchedule', 'contractType']),
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Error al crear la oferta: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Show a single offer (must belong to authenticated company).
+     */
+    public function showOffer($id)
+    {
+        $user    = Auth::user();
+        $company = $user->company;
+
+        $offer = JobOpportunityOffer::with(['company', 'location', 'state', 'category', 'workSchedule', 'contractType'])
+            ->where('id', $id)
+            ->where('company_id', $company->id)
+            ->first();
+
+        if (!$offer) {
+            return response()->json(['success' => false, 'message' => 'Oferta no encontrada.'], 404);
+        }
+
+        return response()->json(['success' => true, 'offer' => $offer]);
+    }
+
+    /**
+     * Update an offer (must belong to authenticated company).
+     */
+    public function updateOffer(Request $request, $id)
+    {
+        $user    = Auth::user();
+        $company = $user->company;
+
+        $offer = JobOpportunityOffer::where('id', $id)->where('company_id', $company->id)->first();
+
+        if (!$offer) {
+            return response()->json(['success' => false, 'message' => 'Oferta no encontrada.'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'title'            => 'required|string|max:255',
+            'description'      => 'required|string',
+            'requirements'     => 'required|string',
+            'benefits'         => 'nullable|string',
+            'publication_date' => 'required|date',
+            'deadline'         => 'nullable|date',
+            'salary'           => 'required|numeric|min:0',
+            'salary_currency'  => 'required|string|in:SOLES,DOLARES',
+            'address'          => 'required|string|max:255',
+            'department'       => 'required|string|max:255',
+            'province'         => 'required|string|max:255',
+            'location_id'      => 'required|integer',
+            'category_id'      => 'required|integer',
+            'work_schedule_id' => 'required|integer',
+            'contract_type_id' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            if ($offer->title !== $request->title) {
+                $slug      = Str::slug($request->title);
+                $slugCount = JobOpportunityOffer::where('slug', 'like', $slug . '%')->where('id', '!=', $offer->id)->count();
+                if ($slugCount > 0) {
+                    $slug .= '-' . time();
+                }
+                $offer->slug = $slug;
+            }
+
+            $offer->fill($request->except(['company_id', 'state_id'])); // never allow company override
+            $offer->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => '¡Oferta actualizada exitosamente!',
+                'offer'   => $offer->load(['company', 'location', 'state', 'category', 'workSchedule', 'contractType']),
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Error al actualizar la oferta: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Toggle offer state (active ↔ finished) for the authenticated company.
+     */
+    public function toggleOfferState(Request $request, $id)
+    {
+        $user    = Auth::user();
+        $company = $user->company;
+
+        $offer = JobOpportunityOffer::where('id', $id)->where('company_id', $company->id)->first();
+
+        if (!$offer) {
+            return response()->json(['success' => false, 'message' => 'Oferta no encontrada.'], 404);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Toggle: active(2) → finished(3), anything else → active(2)
+            $newState       = ($offer->state_id === 2) ? 3 : 2;
+            $offer->state_id = $newState;
+            $offer->save();
+
+            DB::table('job_opportunity_offer_state_detail')->insert([
+                'offer_id'   => $offer->id,
+                'state_id'   => $newState,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado de la oferta actualizado.',
+                'offer'   => $offer->load(['state']),
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Delete an offer (must belong to authenticated company).
+     */
+    public function destroyOffer($id)
+    {
+        $user    = Auth::user();
+        $company = $user->company;
+
+        $offer = JobOpportunityOffer::where('id', $id)->where('company_id', $company->id)->first();
+
+        if (!$offer) {
+            return response()->json(['success' => false, 'message' => 'Oferta no encontrada.'], 404);
+        }
+
+        try {
+            $offer->delete();
+            return response()->json(['success' => true, 'message' => 'Oferta eliminada exitosamente.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Update application status (accepted / rejected).
+     */
+    public function updateApplicationStatus(Request $request, $id)
+    {
+        $user    = Auth::user();
+        $company = $user->company;
+
+        // Verify the application belongs to an offer of this company
+        $application = DB::table('job_opportunity_applications')
+            ->join('job_opportunity_offer', 'job_opportunity_applications.offer_id', '=', 'job_opportunity_offer.id')
+            ->where('job_opportunity_applications.id', $id)
+            ->where('job_opportunity_offer.company_id', $company->id)
+            ->whereNull('job_opportunity_applications.deleted_at')
+            ->select('job_opportunity_applications.*')
+            ->first();
+
+        if (!$application) {
+            return response()->json(['success' => false, 'message' => 'Postulación no encontrada.'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'status'   => 'required|string|in:accepted,rejected,postulated',
+            'feedback' => 'nullable|string|max:1000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 422);
+        }
+
+        try {
+            DB::table('job_opportunity_applications')
+                ->where('id', $id)
+                ->update([
+                    'status'     => $request->status,
+                    'feedback'   => $request->feedback,
+                    'updated_at' => now(),
+                ]);
+
+            return response()->json(['success' => true, 'message' => 'Estado del postulante actualizado.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 }
