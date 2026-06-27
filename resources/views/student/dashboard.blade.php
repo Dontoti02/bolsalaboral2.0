@@ -256,7 +256,7 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
                         @forelse($activeOffers as $offer)
-                        <div class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-sm hover:border-primary-container transition-colors group cursor-pointer">
+                        <div onclick="openApplyModal('{{ $offer->id }}', '{{ addslashes($offer->title) }}', '{{ addslashes($offer->company_name) }}', '{{ addslashes($offer->description) }}')" class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-sm hover:border-primary transition-colors group cursor-pointer">
                             <div class="flex justify-between items-start mb-4">
                                 <div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center border border-outline-variant">
                                     <span class="material-symbols-outlined text-on-surface-variant">corporate_fare</span>
@@ -288,33 +288,32 @@
                     <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
                         <table class="w-full text-left border-collapse">
                             <tbody>
+                                @forelse($recentApplications->take(3) as $app)
+                                @php
+                                    $statusText = 'Pendiente';
+                                    $statusClass = 'bg-tertiary-fixed text-on-tertiary-fixed-variant';
+                                    if ($app->status === 'accepted') {
+                                        $statusText = 'Aprobada';
+                                        $statusClass = 'bg-secondary-fixed/50 text-on-secondary-container';
+                                    } elseif ($app->status === 'rejected') {
+                                        $statusText = 'Rechazada';
+                                        $statusClass = 'bg-error-container text-on-error-container';
+                                    }
+                                @endphp
                                 <tr class="border-b border-surface-container-high hover:bg-surface-container-low transition-colors">
                                     <td class="p-md">
-                                        <p class="font-label-md text-on-surface">Científico de Datos</p>
-                                        <p class="text-body-sm text-on-surface-variant">AI Solutions</p>
+                                        <p class="font-label-md text-on-surface">{{ $app->offer->title ?? 'Puesto' }}</p>
+                                        <p class="text-body-sm text-on-surface-variant">{{ $app->offer->company->name ?? 'Empresa' }}</p>
                                     </td>
                                     <td class="p-md text-right">
-                                        <span class="bg-tertiary-fixed text-on-tertiary-fixed-variant px-2 py-1 rounded text-label-sm font-label-sm font-semibold">Pendiente</span>
+                                        <span class="{{ $statusClass }} px-2 py-1 rounded text-label-sm font-label-sm font-semibold">{{ $statusText }}</span>
                                     </td>
                                 </tr>
-                                <tr class="border-b border-surface-container-high hover:bg-surface-container-low transition-colors">
-                                    <td class="p-md">
-                                        <p class="font-label-md text-on-surface">Diseñador UX</p>
-                                        <p class="text-body-sm text-on-surface-variant">Creative Agency</p>
-                                    </td>
-                                    <td class="p-md text-right">
-                                        <span class="bg-secondary-fixed/50 text-on-secondary-container px-2 py-1 rounded text-label-sm font-label-sm font-semibold">Aprobada</span>
-                                    </td>
+                                @empty
+                                <tr>
+                                    <td class="p-md text-center text-on-surface-variant">No ha realizado ninguna postulación.</td>
                                 </tr>
-                                <tr class="hover:bg-surface-container-low transition-colors">
-                                    <td class="p-md">
-                                        <p class="font-label-md text-on-surface">Practicante de Marketing</p>
-                                        <p class="text-body-sm text-on-surface-variant">Brand Group</p>
-                                    </td>
-                                    <td class="p-md text-right">
-                                        <span class="bg-error-container text-on-error-container px-2 py-1 rounded text-label-sm font-label-sm font-semibold">Rechazada</span>
-                                    </td>
-                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                         <div class="p-sm bg-surface-container-lowest border-t border-outline-variant text-center">
@@ -343,39 +342,34 @@
                             </tr>
                         </thead>
                         <tbody class="text-body-md font-body-md">
+                            @forelse($recentApplications as $app)
+                            @php
+                                $statusText = 'Pendiente';
+                                $statusClass = 'bg-tertiary-fixed text-on-tertiary-fixed-variant';
+                                if ($app->status === 'accepted') {
+                                    $statusText = 'Aprobada';
+                                    $statusClass = 'bg-secondary-fixed/50 text-on-secondary-container';
+                                } elseif ($app->status === 'rejected') {
+                                    $statusText = 'Rechazada';
+                                    $statusClass = 'bg-error-container text-on-error-container';
+                                }
+                            @endphp
                             <tr class="border-b border-surface-container-high hover:bg-surface-container-low transition-colors">
-                                <td class="p-4 font-semibold text-on-surface">Científico de Datos</td>
-                                <td class="p-4 text-on-surface-variant">AI Solutions</td>
-                                <td class="p-4 text-on-surface-variant">25 Jun 2026</td>
+                                <td class="p-4 font-semibold text-on-surface">{{ $app->offer->title ?? 'Puesto' }}</td>
+                                <td class="p-4 text-on-surface-variant">{{ $app->offer->company->name ?? 'Empresa' }}</td>
+                                <td class="p-4 text-on-surface-variant">{{ $app->created_at ? $app->created_at->format('d M Y') : '-' }}</td>
                                 <td class="p-4">
-                                    <span class="bg-tertiary-fixed text-on-tertiary-fixed-variant px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold">Pendiente</span>
+                                    <span class="{{ $statusClass }} px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold">{{ $statusText }}</span>
                                 </td>
                                 <td class="p-4 text-right">
-                                    <button class="text-primary hover:underline text-label-sm font-label-sm font-semibold">Ver seguimiento</button>
+                                    <button onclick="alert('Feedback del empleador: {{ $app->feedback ?: 'Ninguno' }}')" class="text-primary hover:underline text-label-sm font-label-sm font-semibold">Ver seguimiento</button>
                                 </td>
                             </tr>
-                            <tr class="border-b border-surface-container-high hover:bg-surface-container-low transition-colors">
-                                <td class="p-4 font-semibold text-on-surface">Diseñador UX</td>
-                                <td class="p-4 text-on-surface-variant">Creative Agency</td>
-                                <td class="p-4 text-on-surface-variant">20 Jun 2026</td>
-                                <td class="p-4">
-                                    <span class="bg-secondary-fixed/50 text-on-secondary-container px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold">Aprobada</span>
-                                </td>
-                                <td class="p-4 text-right">
-                                    <button class="text-primary hover:underline text-label-sm font-label-sm font-semibold">Ver seguimiento</button>
-                                </td>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="p-4 text-center text-on-surface-variant">No ha realizado ninguna postulación aún.</td>
                             </tr>
-                            <tr class="hover:bg-surface-container-low transition-colors">
-                                <td class="p-4 font-semibold text-on-surface">Practicante de Marketing</td>
-                                <td class="p-4 text-on-surface-variant">Brand Group</td>
-                                <td class="p-4 text-on-surface-variant">10 Jun 2026</td>
-                                <td class="p-4">
-                                    <span class="bg-error-container text-on-error-container px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold">Rechazada</span>
-                                </td>
-                                <td class="p-4 text-right">
-                                    <button class="text-primary hover:underline text-label-sm font-label-sm font-semibold">Ver seguimiento</button>
-                                </td>
-                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -559,6 +553,102 @@
             showToast('Error en el servidor.');
         });
     }
+
+    function openApplyModal(id, title, company, desc) {
+        document.getElementById('modal-offer-id').value = id;
+        document.getElementById('modal-offer-title').textContent = title;
+        document.getElementById('modal-offer-company').textContent = company;
+        document.getElementById('modal-offer-desc').textContent = desc;
+        document.getElementById('apply-modal').classList.remove('hidden');
+        document.getElementById('apply-modal').classList.add('flex');
+    }
+    
+    function closeApplyModal() {
+        document.getElementById('apply-modal').classList.add('hidden');
+        document.getElementById('apply-modal').classList.remove('flex');
+    }
+    
+    function submitApplication() {
+        const offerId = document.getElementById('modal-offer-id').value;
+        const cvSelect = document.getElementById('modal-cv-select');
+        if (!cvSelect || !cvSelect.value) {
+            alert('Debe seleccionar un currículum. Si no tiene uno, súbalo en la sección Mis CVs.');
+            return;
+        }
+        
+        const payload = {
+            cv_id: cvSelect.value,
+            message: document.getElementById('modal-msg').value,
+            _token: '{{ csrf_token() }}'
+        };
+        
+        fetch('/student/apply/' + offerId, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast('¡Postulación enviada exitosamente!');
+                closeApplyModal();
+                location.reload();
+            } else {
+                showToast(data.message || 'Error al postular.');
+            }
+        })
+        .catch(err => {
+            showToast('Error de comunicación con el servidor.');
+        });
+    }
 </script>
+
+<!-- Apply Modal -->
+<div id="apply-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/50 p-4">
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant p-lg max-w-lg w-full space-y-md">
+        <div class="flex justify-between items-start">
+            <div>
+                <h3 id="modal-offer-title" class="font-headline-md text-headline-md text-on-surface">Título de la Oferta</h3>
+                <p id="modal-offer-company" class="text-body-sm text-on-surface-variant font-medium mt-1">Nombre de la Empresa</p>
+            </div>
+            <button onclick="closeApplyModal()" class="text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="border-y border-outline-variant py-md space-y-md">
+            <div>
+                <h4 class="font-semibold text-body-sm text-on-surface">Descripción:</h4>
+                <p id="modal-offer-desc" class="text-body-sm text-on-surface-variant mt-1 max-h-32 overflow-y-auto">Descripción completa...</p>
+            </div>
+            <form id="apply-form" class="space-y-md">
+                @csrf
+                <input type="hidden" id="modal-offer-id" name="offer_id">
+                <div>
+                    <label for="modal-cv-select" class="block font-semibold text-body-sm text-on-surface mb-1">Seleccionar Currículum:</label>
+                    <select id="modal-cv-select" name="cv_id" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+                        @foreach($cvs as $cv)
+                        <option value="{{ $cv->id }}">{{ $cv->filename }} (Versión {{ $cv->version }})</option>
+                        @endforeach
+                    </select>
+                    @if($cvs->isEmpty())
+                    <p class="text-xs text-red-600 mt-1">¡Debe subir un currículum primero en la pestaña "Mis CVs"!</p>
+                    @endif
+                </div>
+                <div>
+                    <label for="modal-msg" class="block font-semibold text-body-sm text-on-surface mb-1">Mensaje de presentación (Opcional):</label>
+                    <textarea id="modal-msg" name="message" rows="3" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Escriba un breve mensaje para el reclutador..."></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="flex justify-end gap-md">
+            <button onclick="closeApplyModal()" class="px-5 py-2.5 border border-outline-variant text-on-surface-variant rounded-xl text-label-md font-label-md hover:bg-surface-container-high font-semibold transition-all">Cancelar</button>
+            <button onclick="submitApplication()" class="px-5 py-2.5 bg-primary text-on-primary rounded-xl text-label-md font-label-md hover:opacity-95 font-semibold transition-all">Enviar Postulación</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>

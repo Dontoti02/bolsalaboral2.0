@@ -214,4 +214,82 @@ class StudentController extends Controller
 
         return response()->download($filePath);
     }
+
+    /**
+     * Apply to a job offer.
+     */
+    public function applyToOffer(Request $request, $offer_id)
+    {
+        $validator = Validator::make($request->all(), [
+            'cv_id' => 'required|integer',
+            'message' => 'nullable|string|max:1000',
+        ], [
+            'cv_id.required' => 'Debe seleccionar un currículum para postular.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        try {
+            $user = auth()->user();
+            $person = $user->person;
+
+            if (!$person) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Debe completar sus datos personales primero.'
+                ], 400);
+            }
+
+            // Validate CV ownership
+            $cv = DB::table('job_opportunity_user_cv')
+                ->where('id', $request->cv_id)
+                ->where('user_id', $user->id)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (!$cv) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El currículum seleccionado no es válido.'
+                ], 400);
+            }
+
+            // Check if already applied
+            $alreadyApplied = JobOpportunityApplication::where('user_id', $user->id)
+                ->where('offer_id', $offer_id)
+                ->exists();
+
+            if ($alreadyApplied) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ya ha postulado a esta oferta laboral.'
+                ], 400);
+            }
+
+            JobOpportunityApplication::create([
+                'fullname' => $person->names,
+                'program_study' => 'Computación y Sistemas', // default study program
+                'message' => $request->message ?? '',
+                'status' => 'postulated', // Initial status
+                'cv' => $cv->url,
+                'offer_id' => $offer_id,
+                'user_id' => $user->id,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => '¡Postulación enviada exitosamente!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al registrar postulación: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
