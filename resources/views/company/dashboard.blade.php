@@ -200,7 +200,7 @@
                     <h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Resumen de Empresa</h1>
                     <p class="font-body-md text-body-md text-on-surface-variant">Monitorea el rendimiento de tus ofertas y postulantes.</p>
                 </div>
-                <button onclick="switchTab('offers')" class="bg-primary text-on-primary rounded-lg px-lg py-3 font-label-md text-label-md flex items-center justify-center gap-sm shadow-sm hover:opacity-90 transition-opacity">
+                <button onclick="openOfferModal()" class="bg-primary text-on-primary rounded-lg px-lg py-3 font-label-md text-label-md flex items-center justify-center gap-sm shadow-sm hover:opacity-90 transition-opacity">
                     <span class="material-symbols-outlined text-[20px]">add</span>
                     Crear Nueva Oferta
                 </button>
@@ -359,7 +359,7 @@
             <!-- Header with Action -->
             <div class="flex justify-between items-center">
                 <h2 class="text-headline-sm font-headline-sm text-on-surface">Gestionar Ofertas de Empleo</h2>
-                <button class="bg-primary text-on-primary rounded-lg px-md py-2.5 font-label-md text-label-md flex items-center gap-sm shadow-sm hover:opacity-90 transition-opacity">
+                <button onclick="openOfferModal()" class="bg-primary text-on-primary rounded-lg px-md py-2.5 font-label-md text-label-md flex items-center gap-sm shadow-sm hover:opacity-90 transition-opacity">
                     <span class="material-symbols-outlined text-[20px]">add</span>
                     Publicar Oferta
                 </button>
@@ -380,42 +380,34 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($offers as $o)
+                            @php
+                                $stateName = $o->state->name ?? 'Desconocido';
+                                $stateKey = $o->state->key ?? '';
+                                $stateClass = 'bg-surface-container text-on-surface-variant';
+                                if ($stateKey === 'active') $stateClass = 'bg-secondary-container text-on-secondary-container';
+                                elseif ($stateKey === 'draft') $stateClass = 'bg-tertiary-fixed text-on-tertiary-fixed-variant';
+                                elseif ($stateKey === 'finished') $stateClass = 'bg-surface-container text-on-surface-variant';
+                            @endphp
                             <tr class="border-b border-surface-container-high hover:bg-surface-container-lowest transition-colors">
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface font-semibold">Senior Backend Engineer</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">Lima, Perú (Híbrido)</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">24 Oct 2023</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface text-center">24</td>
+                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface font-semibold">{{ $o->title }}</td>
+                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">{{ $o->location->name ?? 'No especificada' }}</td>
+                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">{{ $o->publication_date ? \Carbon\Carbon::parse($o->publication_date)->format('d M Y') : '-' }}</td>
+                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface text-center">{{ $o->applicants_count }}</td>
                                 <td class="px-lg py-md text-right">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-secondary-container text-on-secondary-container font-semibold">Activa</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm {{ $stateClass }} font-semibold">{{ $stateName }}</span>
                                 </td>
                                 <td class="px-lg py-md text-right">
-                                    <button class="text-primary hover:underline font-label-sm text-label-sm font-semibold">Editar</button>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-surface-container-high hover:bg-surface-container-lowest transition-colors">
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface font-semibold">Product Manager</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">Remoto</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">20 Oct 2023</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface text-center">15</td>
-                                <td class="px-lg py-md text-right">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-secondary-container text-on-secondary-container font-semibold">Activa</span>
-                                </td>
-                                <td class="px-lg py-md text-right">
-                                    <button class="text-primary hover:underline font-label-sm text-label-sm font-semibold">Editar</button>
+                                    <button onclick="toggleOfferState({{ $o->id }})" class="text-primary hover:underline font-label-sm text-label-sm font-semibold">
+                                        {{ $stateKey === 'active' ? 'Finalizar' : 'Activar' }}
+                                    </button>
                                 </td>
                             </tr>
-                            <tr class="hover:bg-surface-container-lowest transition-colors">
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface font-semibold">UX Designer Jr.</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">Lima, Perú (Presencial)</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">15 Oct 2023</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface text-center">6</td>
-                                <td class="px-lg py-md text-right">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container text-on-surface-variant font-semibold">Cerrada</span>
-                                </td>
-                                <td class="px-lg py-md text-right">
-                                    <button class="text-primary hover:underline font-label-sm text-label-sm font-semibold">Reabrir</button>
-                                </td>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="px-lg py-md text-center text-on-surface-variant">No ha publicado ofertas aún.</td>
                             </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -439,57 +431,37 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($applicants as $app)
                             <tr class="border-b border-surface-container-high hover:bg-surface-container-lowest transition-colors">
                                 <td class="px-lg py-md">
                                     <div class="flex items-center gap-sm">
-                                        <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold text-label-sm">CM</div>
+                                        <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold text-label-sm">{{ strtoupper(substr($app->fullname ?? 'C', 0, 1)) }}</div>
                                         <div>
-                                            <span class="font-body-sm text-body-sm text-on-surface font-semibold block">Carlos Mendoza</span>
-                                            <span class="text-[11px] text-on-surface-variant">Estudiante de Computación</span>
+                                            <span class="font-body-sm text-body-sm text-on-surface font-semibold block">{{ $app->fullname ?? 'Candidato' }}</span>
+                                            <span class="text-[11px] text-on-surface-variant">{{ $app->program_study }}</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">Senior Backend Engineer</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">Hace 2 horas</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">carlos@mendoza.edu.pe</td>
-                                <td class="px-lg py-md text-right">
-                                    <button class="text-primary hover:underline font-label-sm text-label-sm font-semibold">Ver Perfil</button>
+                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">{{ $app->offer_title }}</td>
+                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">{{ \Carbon\Carbon::parse($app->created_at)->format('d M Y') }}</td>
+                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">
+                                    <span class="font-semibold text-xs py-0.5 px-2 rounded @if($app->status == 'accepted') bg-green-100 text-green-800 @elseif($app->status == 'rejected') bg-red-100 text-red-800 @else bg-yellow-100 text-yellow-800 @endif">{{ strtoupper($app->status) }}</span>
+                                </td>
+                                <td class="px-lg py-md text-right flex justify-end gap-2">
+                                    @if($app->cv)
+                                    <a href="{{ $app->cv }}" target="_blank" class="text-primary hover:underline font-label-sm text-label-sm font-semibold flex items-center gap-0.5"><span class="material-symbols-outlined text-sm">picture_as_pdf</span> CV</a>
+                                    @endif
+                                    @if($app->status == 'postulated')
+                                    <button onclick="updateStatus({{ $app->id }}, 'accepted')" class="text-green-600 hover:text-green-800 font-label-sm text-label-sm font-semibold">Aprobar</button>
+                                    <button onclick="updateStatus({{ $app->id }}, 'rejected')" class="text-red-600 hover:text-red-800 font-label-sm text-label-sm font-semibold">Rechazar</button>
+                                    @endif
                                 </td>
                             </tr>
-                            <tr class="border-b border-surface-container-high hover:bg-surface-container-lowest transition-colors">
-                                <td class="px-lg py-md">
-                                    <div class="flex items-center gap-sm">
-                                        <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold text-label-sm">LR</div>
-                                        <div>
-                                            <span class="font-body-sm text-body-sm text-on-surface font-semibold block">Laura Ríos</span>
-                                            <span class="text-[11px] text-on-surface-variant">Estudiante de Administración</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">Product Manager</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">Hace 5 horas</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">laura.rios@gmail.com</td>
-                                <td class="px-lg py-md text-right">
-                                    <button class="text-primary hover:underline font-label-sm text-label-sm font-semibold">Ver Perfil</button>
-                                </td>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="px-lg py-md text-center text-on-surface-variant">No hay postulantes registrados todavía.</td>
                             </tr>
-                            <tr class="hover:bg-surface-container-lowest transition-colors">
-                                <td class="px-lg py-md">
-                                    <div class="flex items-center gap-sm">
-                                        <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold text-label-sm">JV</div>
-                                        <div>
-                                            <span class="font-body-sm text-body-sm text-on-surface font-semibold block">Javier Vargas</span>
-                                            <span class="text-[11px] text-on-surface-variant">Estudiante de Sistemas</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">Senior Backend Engineer</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">Ayer</td>
-                                <td class="px-lg py-md font-body-sm text-body-sm text-on-surface-variant">j.vargas@outlook.com</td>
-                                <td class="px-lg py-md text-right">
-                                    <button class="text-primary hover:underline font-label-sm text-label-sm font-semibold">Ver Perfil</button>
-                                </td>
-                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -752,6 +724,188 @@
         // Initialize to show 'dashboard' panel first
         switchTab('dashboard');
     });
+
+    function openOfferModal() {
+        document.getElementById('offer-modal').classList.remove('hidden');
+        document.getElementById('offer-modal').classList.add('flex');
+    }
+    
+    function closeOfferModal() {
+        document.getElementById('offer-modal').classList.add('hidden');
+        document.getElementById('offer-modal').classList.remove('flex');
+    }
+    
+    function submitOffer() {
+        const form = document.getElementById('offer-form');
+        const formData = new FormData(form);
+        
+        const payload = {};
+        formData.forEach((val, key) => payload[key] = val);
+        
+        fetch('{{ route("company.offers.store") }}', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('¡Oferta laboral publicada exitosamente!');
+                closeOfferModal();
+                location.reload();
+            } else {
+                alert(data.message || 'Error al guardar la oferta.');
+            }
+        })
+        .catch(err => {
+            alert('Error en el servidor.');
+        });
+    }
+    
+    function toggleOfferState(id) {
+        if (!confirm('¿Está seguro de cambiar el estado de esta oferta?')) return;
+        
+        fetch('/company/offers/' + id + '/toggle-state', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || 'Error al cambiar estado.');
+            }
+        })
+        .catch(err => {
+            alert('Error.');
+        });
+    }
+    
+    function updateStatus(appId, status) {
+        const feedback = prompt('Ingrese un comentario de retroalimentación para el candidato (Opcional):');
+        if (feedback === null) return;
+        
+        fetch('/company/applications/' + appId + '/status', {
+            method: 'POST',
+            body: JSON.stringify({ status: status, feedback: feedback }),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('¡Postulante actualizado!');
+                location.reload();
+            } else {
+                alert(data.message || 'Error.');
+            }
+        })
+        .catch(err => {
+            alert('Error.');
+        });
+    }
 </script>
+
+<!-- Create Offer Modal -->
+<div id="offer-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/50 p-4">
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant p-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-md">
+        <div class="flex justify-between items-center">
+            <h3 class="font-headline-md text-headline-md text-on-surface">Publicar Nueva Oferta de Empleo</h3>
+            <button onclick="closeOfferModal()" class="text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="offer-form" class="grid grid-cols-1 md:grid-cols-2 gap-md pt-2">
+            @csrf
+            <div class="col-span-2">
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Título del Puesto *</label>
+                <input type="text" name="title" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+            </div>
+            <div class="col-span-2">
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Descripción del Puesto *</label>
+                <textarea name="description" rows="3" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"></textarea>
+            </div>
+            <div class="col-span-2">
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Requerimientos *</label>
+                <textarea name="requirements" rows="2" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Experiencia, habilidades, etc."></textarea>
+            </div>
+            <div class="col-span-2">
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Beneficios (Opcional)</label>
+                <textarea name="benefits" rows="2" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Seguro, bonos, etc."></textarea>
+            </div>
+            <div>
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Salario Mensual *</label>
+                <input type="number" step="0.01" name="salary" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+            </div>
+            <div>
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Moneda *</label>
+                <select name="salary_currency" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+                    <option value="SOLES">Soles (S/)</option>
+                    <option value="DOLARES">Dólares ($)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Modalidad *</label>
+                <select name="location_id" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+                    @foreach($locations as $loc)
+                    <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Categoría *</label>
+                <select name="category_id" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+                    @foreach($categories as $cat)
+                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Jornada Laboral *</label>
+                <select name="work_schedule_id" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+                    @foreach($schedules as $sch)
+                    <option value="{{ $sch->id }}">{{ $sch->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Tipo de Contrato *</label>
+                <select name="contract_type_id" class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+                    @foreach($contracts as $con)
+                    <option value="{{ $con->id }}">{{ $con->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Departamento *</label>
+                <input type="text" name="department" value="Lima" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+            </div>
+            <div>
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Provincia *</label>
+                <input type="text" name="province" value="Lima" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+            </div>
+            <div class="col-span-2">
+                <label class="block font-semibold text-body-sm text-on-surface mb-1">Dirección de Trabajo *</label>
+                <input type="text" name="address" required class="w-full p-2 bg-surface border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+            </div>
+        </form>
+        <div class="flex justify-end gap-md">
+            <button onclick="closeOfferModal()" class="px-5 py-2.5 border border-outline-variant text-on-surface-variant rounded-xl text-label-md font-label-md hover:bg-surface-container-high font-semibold transition-all">Cancelar</button>
+            <button onclick="submitOffer()" class="px-5 py-2.5 bg-primary text-on-primary rounded-xl text-label-md font-label-md hover:opacity-95 font-semibold transition-all">Guardar y Publicar</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>

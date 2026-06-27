@@ -59,29 +59,39 @@ class CompanyDashboardController extends Controller
                     ->where('status', 'postulated')
                     ->count();
 
-                $recentApplicants = DB::table('job_opportunity_applications')
+                $applicants = DB::table('job_opportunity_applications')
                     ->whereIn('offer_id', $offerIds)
                     ->whereNull('job_opportunity_applications.deleted_at')
                     ->join('job_opportunity_offer', 'job_opportunity_applications.offer_id', '=', 'job_opportunity_offer.id')
                     ->select('job_opportunity_applications.*', 'job_opportunity_offer.title as offer_title')
                     ->orderBy('job_opportunity_applications.created_at', 'desc')
-                    ->take(5)
                     ->get();
+                
+                $recentApplicants = $applicants->take(5);
+            } else {
+                $applicants = collect();
             }
 
-            // Recent Offers
-            $recentOffers = JobOpportunityOffer::where('company_id', $company->id)
-                ->with(['state'])
+            // All Offers
+            $offers = JobOpportunityOffer::where('company_id', $company->id)
+                ->with(['state', 'location', 'workSchedule', 'contractType', 'category'])
                 ->latest('publication_date')
-                ->take(5)
                 ->get();
 
-            foreach ($recentOffers as $offer) {
+            foreach ($offers as $offer) {
                 $offer->applicants_count = DB::table('job_opportunity_applications')
                     ->where('offer_id', $offer->id)
                     ->whereNull('deleted_at')
                     ->count();
             }
+            $recentOffers = $offers->take(5);
+
+            // Load options for publishing modal
+            $categories = DB::table('job_opportunity_offer_category')->get();
+            $locations = DB::table('job_opportunity_location')->get();
+            $schedules = DB::table('job_opportunity_work_schedules')->get();
+            $contracts = DB::table('job_opportunity_contract_types')->get();
+
         } catch (\Exception $e) {
             $company = new Company([
                 'name' => 'Empresa de Prueba',
@@ -96,7 +106,13 @@ class CompanyDashboardController extends Controller
             $applicantsCount = 0;
             $pendingApplicantsCount = 0;
             $recentOffers = collect();
+            $offers = collect();
             $recentApplicants = collect();
+            $applicants = collect();
+            $categories = collect();
+            $locations = collect();
+            $schedules = collect();
+            $contracts = collect();
         }
 
         try {
@@ -112,7 +128,13 @@ class CompanyDashboardController extends Controller
             'applicantsCount',
             'pendingApplicantsCount',
             'recentOffers',
+            'offers',
             'recentApplicants',
+            'applicants',
+            'categories',
+            'locations',
+            'schedules',
+            'contracts',
             'config'
         ));
     }
