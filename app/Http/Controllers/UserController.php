@@ -426,6 +426,8 @@ class UserController extends Controller
      */
     public function import(Request $request)
     {
+        @set_time_limit(300);
+
         $validator = Validator::make($request->all(), [
             'file' => 'required|file|mimes:xlsx,xls',
         ], [
@@ -459,6 +461,8 @@ class UserController extends Controller
 
             $importedUsers = [];
             $errors = [];
+            $rolUserToInsert = [];
+            $importedUserIds = [];
 
             // Find all roles to map name -> id
             $rolesMap = [
@@ -468,10 +472,20 @@ class UserController extends Controller
                 'EMPRESA' => 4,
             ];
 
+            // Set dynamic limits for very large uploads to prevent timeouts
+            set_time_limit(600);
+            ini_set('memory_limit', '512M');
+
             // Load all existing emails into an in-memory hash map for fast O(1) checks
             $existingEmails = User::pluck('email')->flip()->toArray();
 
-            DB::beginTransaction();
+            // Prepare arrays for batch insertion
+            $companiesToInsert = [];
+            $peopleToInsert = [];
+            $usersToPrepare = [];
+            
+            // Hash cache to prevent computing identical default passwords repeatedly
+            $hashedPasswordCache = [];
 
             $totalRows = count($rows);
             for ($i = 2; $i <= $totalRows; $i++) {
@@ -512,48 +526,145 @@ class UserController extends Controller
                 }
 
                 $phoneFormatted = substr($phone, 0, 9);
-
-                // Set password as the document number (DNI for students/teachers, RUC for companies)
-                $user = new User();
-                $user->email = $email;
-                $user->password = Hash::make($docNumber ?: '00000000');
-                $user->rol_id = $roleId;
-                $user->is_active = true;
-                $user->attempts = 0;
+                
+                // Cache hashes of default passwords to avoid slow bcrypt CPU bottleneck
+                $passKey = $docNumber ?: '00000000';
+                if (!isset($hashedPasswordCache[$passKey])) {
+                    $hashedPasswordCache[$passKey] = Hash::make($passKey);
+                }
+                $hashedPassword = $hashedPasswordCache[$passKey];
 
                 if ($roleId == 4) {
-                    $company = Company::create([
+                    $companiesToInsert[] = [
                         'name' => $names,
                         'ruc' => $docNumber ?: '00000000000',
                         'email' => $email,
                         'phone' => $phoneFormatted,
                         'mailbox' => $email,
                         'is_verified' => true,
-                    ]);
-                    $user->company_id = $company->id;
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 } else {
-                    $person = Person::create([
+                    $peopleToInsert[] = [
                         'document_type' => $docType,
                         'document_number' => $docNumber ?: '00000000',
                         'names' => $names,
                         'phone' => $phoneFormatted,
                         'email' => $email,
-                    ]);
-                    $user->person_id = $person->id;
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 }
 
-                $user->save();
-
-                DB::table('rol_user')->insert([
+                // Store user template for insertion after we obtain the IDs
+                $usersToPrepare[] = [
+                    'email' => $email,
+                    'password' => $hashedPassword,
                     'rol_id' => $roleId,
-                    'user_id' => $user->id
-                ]);
-
-                $user->load(['person', 'company']);
-                $importedUsers[] = $user;
+                    'is_active' => true,
+                    'attempts' => 0,
+                    'role_id_flag' => $roleId, // temporary placeholder to resolve ids
+                ];
             }
 
-            if (count($errors) > 0 && count($importedUsers) == 0) {
+            DB::beginTransaction();
+
+            // 1. Bulk insert companies in chunks
+            if (!empty($companiesToInsert)) {
+                foreach (array_chunk($companiesToInsert, 250) as $chunk) {
+                    DB::table('job_opportunity_company')->insert($chunk);
+                }
+                
+                // Query back the generated IDs
+                $companyEmails = array_column($companiesToInsert, 'email');
+                $companyIdMap = DB::table('job_opportunity_company')
+                    ->whereIn('email', $companyEmails)
+                    ->pluck('id', 'email')
+                    ->toArray();
+            } else {
+                $companyIdMap = [];
+            }
+
+            // 2. Bulk insert people in chunks
+            if (!empty($peopleToInsert)) {
+                foreach (array_chunk($peopleToInsert, 250) as $chunk) {
+                    DB::table('person')->insert($chunk);
+                }
+                
+                // Query back the generated IDs
+                $personEmails = array_column($peopleToInsert, 'email');
+                $personIdMap = DB::table('person')
+                    ->whereIn('email', $personEmails)
+                    ->pluck('id', 'email')
+                    ->toArray();
+            } else {
+                $personIdMap = [];
+            }
+
+            // 3. Finalize user records with correct foreign keys
+            $usersToInsert = [];
+            foreach ($usersToPrepare as $up) {
+                $email = $up['email'];
+                $roleId = $up['role_id_flag'];
+                
+                $usersToInsert[] = [
+                    'email' => $email,
+                    'password' => $up['password'],
+                    'rol_id' => $up['rol_id'],
+                    'is_active' => $up['is_active'],
+                    'attempts' => $up['attempts'],
+                    'company_id' => ($roleId == 4) ? ($companyIdMap[$email] ?? null) : null,
+                    'person_id' => ($roleId == 4) ? null : ($personIdMap[$email] ?? null),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            // 4. Bulk insert users in chunks
+            $importedUserIds = [];
+            if (!empty($usersToInsert)) {
+                foreach (array_chunk($usersToInsert, 250) as $chunk) {
+                    DB::table('user')->insert($chunk);
+                }
+                
+                // Query back the generated user IDs
+                $userEmails = array_column($usersToInsert, 'email');
+                $userIdMap = DB::table('user')
+                    ->whereIn('email', $userEmails)
+                    ->pluck('id', 'email')
+                    ->toArray();
+                
+                $importedUserIds = array_values($userIdMap);
+            } else {
+                $userIdMap = [];
+            }
+
+            // 5. Bulk insert rol_user in chunks
+            $rolUserToInsert = [];
+            foreach ($usersToInsert as $ui) {
+                $email = $ui['email'];
+                $userId = $userIdMap[$email] ?? null;
+                if ($userId) {
+                    $rolUserToInsert[] = [
+                        'rol_id' => $ui['rol_id'],
+                        'user_id' => $userId
+                    ];
+                }
+            }
+            if (!empty($rolUserToInsert)) {
+                foreach (array_chunk($rolUserToInsert, 250) as $chunk) {
+                    DB::table('rol_user')->insert($chunk);
+                }
+            }
+
+            // 6. Eager load all newly created users for the JSON response
+            $importedUsers = [];
+            if (!empty($importedUserIds)) {
+                $importedUsers = User::with(['person', 'company'])->whereIn('id', $importedUserIds)->get();
+            }
+
+            if (count($errors) > 0 && count($importedUserIds) == 0) {
                 DB::rollBack();
                 return response()->json([
                     'success' => false,
