@@ -1,0 +1,63 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return redirect('/login');
+});
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register/company', [AuthController::class, 'registerCompany']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+use App\Models\User;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\JobOpportunityController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
+
+    Route::post('/admin/users', [UserController::class, 'store']);
+    Route::put('/admin/users/{id}', [UserController::class, 'update']);
+    Route::post('/admin/users/{id}/toggle-status', [UserController::class, 'toggleStatus']);
+    Route::post('/admin/users/bulk-delete', [UserController::class, 'bulkDelete']);
+    Route::post('/admin/users/{id}/change-password', [UserController::class, 'changePassword']);
+    Route::delete('/admin/users/{id}', [UserController::class, 'destroy']);
+    Route::post('/admin/users/import', [UserController::class, 'import']);
+    Route::post('/admin/settings', [UserController::class, 'saveSettings']);
+    Route::post('/admin/profile', [UserController::class, 'updateOwnProfile']);
+    Route::post('/admin/profile/password', [UserController::class, 'updateOwnPassword']);
+
+    // Admin Company Management Routes
+    Route::get('/admin/companies', [UserController::class, 'listCompanies']);
+    Route::post('/admin/companies', [UserController::class, 'storeCompany']);
+    Route::post('/admin/companies/{id}', [UserController::class, 'updateCompany']);
+    Route::post('/admin/companies/{id}/toggle-verify', [UserController::class, 'toggleVerifyCompany']);
+    Route::delete('/admin/companies/{id}', [UserController::class, 'deleteCompany']);
+
+    // Admin Applications (Postulaciones) Routes
+    Route::get('/admin/applications', [UserController::class, 'listApplications']);
+    Route::post('/admin/applications/{id}/status', [UserController::class, 'updateApplicationStatus']);
+    Route::delete('/admin/applications/{id}', [UserController::class, 'deleteApplication']);
+
+    // Job Opportunities (Ofertas Laborales) Routes
+    Route::get('/admin/offers', [JobOpportunityController::class, 'index']);
+    Route::post('/admin/offers', [JobOpportunityController::class, 'store']);
+    Route::get('/admin/offers/meta', [JobOpportunityController::class, 'getMetadata']);
+    Route::post('/admin/offers/meta/add', [JobOpportunityController::class, 'addMetadataItem']);
+    Route::put('/admin/maintainers/{type}/{id}', [JobOpportunityController::class, 'updateMetadataItem']);
+    Route::delete('/admin/maintainers/{type}/{id}', [JobOpportunityController::class, 'deleteMetadataItem']);
+    Route::get('/admin/offers/{id}', [JobOpportunityController::class, 'show']);
+    Route::put('/admin/offers/{id}', [JobOpportunityController::class, 'update']);
+    Route::delete('/admin/offers/{id}', [JobOpportunityController::class, 'destroy']);
+    Route::post('/admin/offers/{id}/toggle-state', [JobOpportunityController::class, 'toggleState']);
+    
+    Route::get('/student/dashboard', [\App\Http\Controllers\StudentController::class, 'dashboard'])->name('student.dashboard');
+
+    Route::get('/company/dashboard', [\App\Http\Controllers\CompanyDashboardController::class, 'showDashboard'])->name('company.dashboard');
+    Route::post('/company/profile', [\App\Http\Controllers\CompanyDashboardController::class, 'updateProfile']);
+
+    Route::get('/teacher/dashboard', [\App\Http\Controllers\TeacherController::class, 'dashboard'])->name('teacher.dashboard');
+});
