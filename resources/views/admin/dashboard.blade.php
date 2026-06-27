@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="light" lang="es">
 
 <head>
@@ -6,7 +6,13 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Panel de Administración Global</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+        :root {
+            --primary-color: {{ $config['primary_color'] ?? '#002741' }};
+            --primary-container-color: {{ $config['primary_color'] ?? '#0f3d5e' }};
+        }
+    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700&amp;display=swap"
         rel="stylesheet" />
@@ -76,108 +82,7 @@
             transform: translateX(20px);
         }
     </style>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-secondary-container": "#007166",
-                        "tertiary-fixed": "#ffdf9d",
-                        "tertiary": "#312200",
-                        "outline": "#72777e",
-                        "secondary-fixed": "#7df7e4",
-                        "inverse-surface": "#2d3133",
-                        "primary": "{{ $config['primary_color'] ?? '#0F3D5E' }}",
-                        "on-primary": "#ffffff",
-                        "inverse-on-surface": "#eff1f4",
-                        "on-error": "#ffffff",
-                        "secondary": "#18A999",
-                        "on-secondary": "#ffffff",
-                        "on-primary-fixed": "#001d33",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-container": "#eceef1",
-                        "on-primary-container": "#81a8ce",
-                        "error-container": "#ffdad6",
-                        "on-tertiary-container": "#d09c00",
-                        "surface": "#f7f9fc",
-                        "on-tertiary-fixed": "#251a00",
-                        "on-secondary-fixed": "#00201c",
-                        "surface-container-highest": "#e0e3e6",
-                        "on-tertiary-fixed-variant": "#5b4300",
-                        "on-surface": "#191c1e",
-                        "secondary-container": "#7df7e4",
-                        "background": "#f7f9fc",
-                        "surface-container-high": "#e6e8eb",
-                        "tertiary-fixed-dim": "#f9bd14",
-                        "on-surface-variant": "#42474e",
-                        "error": "#ba1a1a",
-                        "secondary-fixed-dim": "#5edac8",
-                        "surface-tint": "#3a6285",
-                        "surface-dim": "#d8dadd",
-                        "outline-variant": "#c2c7ce",
-                        "surface-variant": "#e0e3e6",
-                        "tertiary-container": "#4c3700",
-                        "surface-bright": "#f7f9fc",
-                        "on-error-container": "#93000a",
-                        "inverse-primary": "#a3caf2",
-                        "primary-container": "{{ $config['primary_color'] ?? '#0F3D5E' }}",
-                        "primary-fixed-dim": "#a3caf2",
-                        "on-primary-fixed-variant": "#204a6b",
-                        "surface-container-low": "#f2f4f7",
-                        "on-background": "#191c1e",
-                        "primary-fixed": "#cee5ff",
-                        "on-secondary-fixed-variant": "#005048",
-                        "on-tertiary": "#ffffff",
-                        "student-accent": "#7C5DFA",
-                        "student-accent-light": "#E9E5FF"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "md": "16px",
-                        "3xl": "64px",
-                        "base": "4px",
-                        "xs": "4px",
-                        "xl": "32px",
-                        "lg": "24px",
-                        "sm": "8px",
-                        "gutter": "24px",
-                        "2xl": "48px",
-                        "container-max": "1280px"
-                    },
-                    "fontFamily": {
-                        "label-md": ["Inter"],
-                        "label-sm": ["Inter"],
-                        "headline-sm": ["Manrope"],
-                        "body-md": ["Inter"],
-                        "headline-lg": ["Manrope"],
-                        "body-lg": ["Inter"],
-                        "headline-md": ["Manrope"],
-                        "headline-lg-mobile": ["Manrope"],
-                        "display-lg": ["Manrope"],
-                        "body-sm": ["Inter"]
-                    },
-                    "fontSize": {
-                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
-                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
-                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
-                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
-                    }
-                }
-            }
-        }
-    </script>
+
 </head>
 
 <body class="bg-background text-on-background font-body-md min-h-screen flex">

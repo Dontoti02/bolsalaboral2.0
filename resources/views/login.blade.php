@@ -4,109 +4,13 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Login - {{ $config['application_name'] ?? 'Talentum' }}</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "on-surface": "#191c1e",
-                        "surface-container": "#eceef1",
-                        "surface-tint": "#3a6285",
-                        "error-container": "#ffdad6",
-                        "primary-fixed": "#cee5ff",
-                        "tertiary-container": "#4c3700",
-                        "surface-container-low": "#f2f4f7",
-                        "outline-variant": "#c2c7ce",
-                        "surface-dim": "#d8dadd",
-                        "on-primary-fixed": "#001d33",
-                        "surface-container-lowest": "#ffffff",
-                        "on-tertiary": "#ffffff",
-                        "primary-container": "{{ $config['primary_color'] ?? '#0f3d5e' }}",
-                        "inverse-surface": "#2d3133",
-                        "surface-container-high": "#e6e8eb",
-                        "on-secondary-fixed-variant": "#005048",
-                        "on-error-container": "#93000a",
-                        "on-tertiary-fixed": "#251a00",
-                        "primary-fixed-dim": "#a3caf2",
-                        "secondary-fixed": "#7df7e4",
-                        "inverse-on-surface": "#eff1f4",
-                        "tertiary-fixed-dim": "#f9bd14",
-                        "outline": "#72777e",
-                        "on-surface-variant": "#42474e",
-                        "on-tertiary-container": "#d09c00",
-                        "error": "#ba1a1a",
-                        "on-secondary": "#ffffff",
-                        "secondary-fixed-dim": "#5edac8",
-                        "inverse-primary": "#a3caf2",
-                        "tertiary-fixed": "#ffdf9d",
-                        "secondary": "#006b60",
-                        "surface-container-highest": "#e0e3e6",
-                        "on-secondary-fixed": "#00201c",
-                        "surface-bright": "#f7f9fc",
-                        "background": "#f7f9fc",
-                        "surface-variant": "#e0e3e6",
-                        "on-background": "#191c1e",
-                        "secondary-container": "#7df7e4",
-                        "on-primary-fixed-variant": "#204a6b",
-                        "on-primary": "#ffffff",
-                        "primary": "{{ $config['primary_color'] ?? '#002741' }}",
-                        "on-error": "#ffffff",
-                        "on-tertiary-fixed-variant": "#5b4300",
-                        "on-secondary-container": "#007166",
-                        "tertiary": "#312200",
-                        "on-primary-container": "#81a8ce",
-                        "surface": "#f7f9fc"
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    spacing: {
-                        "container-max": "1280px",
-                        "3xl": "64px",
-                        "xl": "32px",
-                        "xs": "4px",
-                        "sm": "8px",
-                        "base": "4px",
-                        "lg": "24px",
-                        "2xl": "48px",
-                        "md": "16px",
-                        "gutter": "24px"
-                    },
-                    fontFamily: {
-                        "headline-lg-mobile": ["Manrope"],
-                        "headline-lg": ["Manrope"],
-                        "display-lg": ["Manrope"],
-                        "body-lg": ["Inter"],
-                        "headline-md": ["Manrope"],
-                        "label-sm": ["Inter"],
-                        "body-sm": ["Inter"],
-                        "body-md": ["Inter"],
-                        "label-md": ["Inter"],
-                        "headline-sm": ["Manrope"]
-                    },
-                    fontSize: {
-                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
-                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
-                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
-                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
-                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
-                    }
-                }
-            }
-        };
-    </script>
+    <style>
+        :root {
+            --primary-color: {{ $config['primary_color'] ?? '#002741' }};
+            --primary-container-color: {{ $config['primary_color'] ?? '#0f3d5e' }};
+        }
+    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
